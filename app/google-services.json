@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "933213551007",
+    "project_id": "prototypingbackend",
+    "storage_bucket": "prototypingbackend.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:933213551007:android:b91ff04604c2c4c4a5a5aa",
+        "android_client_info": {
+          "package_name": "com.example.raionthings"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAD7CbUk3gcljV52zpgtIGfJsDhfHx7Ctk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
