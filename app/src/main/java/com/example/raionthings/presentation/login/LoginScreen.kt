@@ -1,4 +1,4 @@
-package com.example.raionthings.presentation.ui
+package com.example.raionthings.presentation.login
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -40,14 +40,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.raionthings.R
+import com.example.raionthings.presentation.navigation.HomePage
+import com.example.raionthings.presentation.navigation.Signup
 import com.example.raionthings.presentation.ux.CustomToast
-import com.example.raionthings.presentation.viewmodel.AuthState
-import com.example.raionthings.presentation.viewmodel.AuthViewModel
 
 
 @Composable
-fun LoginPage(
-    modifier: Modifier = Modifier,
+fun LoginScreen(
     navController: NavController,
     authViewModel: AuthViewModel
 ) {
@@ -67,7 +66,7 @@ fun LoginPage(
         Font(R.font.medium, FontWeight.Medium),
     )
 
-    Box(modifier = modifier.fillMaxWidth()) {
+    Box(modifier = Modifier.fillMaxWidth()) {
         Column(
             modifier = Modifier
                 .padding(20.dp, 10.dp)

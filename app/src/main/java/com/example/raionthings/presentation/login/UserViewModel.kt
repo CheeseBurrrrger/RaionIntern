@@ -1,4 +1,4 @@
-package com.example.raionthings.presentation.viewmodel
+package com.example.raionthings.presentation.login
 
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -25,7 +25,7 @@ class UserViewModel() :  ViewModel() {
 
     fun addUser(firstName:String, lastName:String){
         val userr = Firebase.auth.currentUser
-        if (authState.value == (AuthState.Unuthenticated)) {
+        if (auth_State.value == (AuthState.Unuthenticated)) {
             Log.d("dunno","error cak")
             authState.value= AuthState.Unuthenticated
         }else{

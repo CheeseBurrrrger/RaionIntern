@@ -24,13 +24,13 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
 import com.example.raionthings.R
-import com.example.raionthings.presentation.viewmodel.AuthState
-import com.example.raionthings.presentation.viewmodel.AuthViewModel
-import com.example.raionthings.presentation.viewmodel.UserViewModel
+import com.example.raionthings.presentation.login.AuthState
+import com.example.raionthings.presentation.login.AuthViewModel
+import com.example.raionthings.presentation.login.UserViewModel
+import com.example.raionthings.presentation.navigation.Login
 
 @Composable
 fun HomePage(
-    modifier: Modifier=Modifier,
     navController: NavController,
     authViewModel: AuthViewModel,
     userViewModel: UserViewModel

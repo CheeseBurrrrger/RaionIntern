@@ -1,4 +1,4 @@
-package com.example.raionthings.presentation.ui
+package com.example.raionthings.presentation.login
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
@@ -34,27 +34,19 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.raionthings.presentation.viewmodel.AuthState
-import com.example.raionthings.presentation.viewmodel.AuthViewModel
-import com.example.raionthings.presentation.viewmodel.UserViewModel
+import com.example.raionthings.presentation.navigation.Login
 
 @Composable
 fun RegisterPage(
-    modifier: Modifier=Modifier,
     navController: NavController,
     authViewModel: AuthViewModel,
-    userViewModel: UserViewModel
 ){
     val emailFocusRequester = remember { FocusRequester() }
-    val firstnameFocus = remember { FocusRequester() }
-    val lastnameFocus = remember { FocusRequester() }
     val RepasswordFocus = remember { FocusRequester() }
     val passwordFocusRequester = remember { FocusRequester() }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var Repassword by remember { mutableStateOf("") }
-    var firstname by remember { mutableStateOf("") }
-    var lastname by remember { mutableStateOf("") }
     val authState = authViewModel.auth_State.observeAsState()
     val context = LocalContext.current
     LaunchedEffect(authState.value) {
@@ -82,62 +74,6 @@ fun RegisterPage(
                 .focusRequester(emailFocusRequester)
                 .onKeyEvent { event ->
                     if (event.key == Key.Enter) {
-                        firstnameFocus.requestFocus()
-                        true
-                    } else {
-                        false
-                    }
-                },
-            colors = TextFieldDefaults.colors(
-                unfocusedIndicatorColor = Color.Transparent,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedContainerColor = Color.LightGray,
-                focusedContainerColor = Color.Gray
-            ),
-            label = { Text("Email") },
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-            keyboardActions = KeyboardActions(
-                onNext = { firstnameFocus.requestFocus() }
-            )
-        )
-        TextField(
-            value = firstname,
-            onValueChange = { firstname = it },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(10.dp, 25.dp)
-                .focusRequester(firstnameFocus)
-                .onKeyEvent { event ->
-                    if (event.key == Key.Enter) {
-                        lastnameFocus.requestFocus()
-                        true
-                    } else {
-                        false
-                    }
-                },
-            colors = TextFieldDefaults.colors(
-                unfocusedIndicatorColor = Color.Transparent,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedContainerColor = Color.LightGray,
-                focusedContainerColor = Color.Gray
-            ),
-            label = { Text("first name") },
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-            keyboardActions = KeyboardActions(
-                onNext = { lastnameFocus.requestFocus() }
-            )
-        )
-        TextField(
-            value = lastname,
-            onValueChange = { lastname = it },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(10.dp, 25.dp)
-                .focusRequester(lastnameFocus)
-                .onKeyEvent { event ->
-                    if (event.key == Key.Enter) {
                         passwordFocusRequester.requestFocus()
                         true
                     } else {
@@ -150,7 +86,7 @@ fun RegisterPage(
                 unfocusedContainerColor = Color.LightGray,
                 focusedContainerColor = Color.Gray
             ),
-            label = { Text("Last Name") },
+            label = { Text("Email") },
             singleLine = true,
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
             keyboardActions = KeyboardActions(
@@ -222,13 +158,11 @@ fun RegisterPage(
             )
         )
         Button(onClick = {
-            if (email.isEmpty() || password.isEmpty() || firstname.isEmpty() || lastname.isEmpty()
-                || Repassword.isEmpty())
+            if (email.isEmpty() || password.isEmpty() || Repassword.isEmpty())
             {Toast.makeText(context, "Please fill in all fields", Toast.LENGTH_SHORT).show()}
             else if(Repassword!=password){Toast.makeText(context, "Please make sure there is no typo i your password", Toast.LENGTH_SHORT).show()}
             else {
                 authViewModel.signup(email, password)
-                userViewModel.addUser(firstname, lastname)
                 true
             }
         }) {

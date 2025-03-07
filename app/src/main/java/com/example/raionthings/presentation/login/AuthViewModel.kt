@@ -1,4 +1,4 @@
-package com.example.raionthings.presentation.viewmodel
+package com.example.raionthings.presentation.login
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -25,7 +25,7 @@ class AuthViewModel : ViewModel() {
                     AuthState.Error(task.exception?.message ?: "Something went wrong")
             }
     }
-    fun signup(email: String, password: String ,firstName:String, lastName:String){
+    fun signup(email: String, password: String){
         if (email.isEmpty()||password.isEmpty()){
             authState.value= AuthState.Error("Kindly fill ur email or password")
         }
