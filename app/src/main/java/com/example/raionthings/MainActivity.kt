@@ -7,7 +7,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -20,12 +19,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.raionthings.presentation.login.AuthViewModel
+import com.example.raionthings.presentation.login.EmailSignInViewModel
 import com.example.raionthings.presentation.login.GoogleAuthUICLient
 import com.example.raionthings.presentation.login.ProfileScreen
 import com.example.raionthings.presentation.login.SignInScreen
 import com.example.raionthings.presentation.login.SignInViewModel
-import com.example.raionthings.presentation.login.UserViewModel
 import com.google.android.gms.auth.api.identity.Identity
 import kotlinx.coroutines.launch
 
@@ -36,14 +34,9 @@ class MainActivity : ComponentActivity() {
             oneTapClient = Identity.getSignInClient(applicationContext)
         )
     }
-    val authViewModel: AuthViewModel by viewModels()
-    val userViewModel: UserViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        FirebaseApp.initializeApp(this)
-//        enableEdgeToEdge()
         setContent {
-//            NavigationController(authViewModel = AuthViewModel(), userViewModel = UserViewModel())
             Surface(
                 modifier = Modifier
                     .fillMaxSize(),
@@ -52,8 +45,11 @@ class MainActivity : ComponentActivity() {
                 val navController= rememberNavController()
                 NavHost(navController = navController, startDestination = "sign_in"){
                     composable("sign_in") {
-                        val viewModel = viewModel<SignInViewModel>()
-                        val state by viewModel.state.collectAsStateWithLifecycle()
+                        val signInViewModel = viewModel<SignInViewModel>()
+                        val signInState by signInViewModel.state.collectAsStateWithLifecycle()
+
+                        val emailSignInViewModel = viewModel<EmailSignInViewModel>()
+                        val emailAuthState by emailSignInViewModel.authState.collectAsStateWithLifecycle()
 
                         LaunchedEffect(key1 = Unit) {
                             if (googleAuthUiClient.getSignedInUser()!=null){
@@ -68,24 +64,26 @@ class MainActivity : ComponentActivity() {
                                         val signInResult = googleAuthUiClient.signInWithIntent(
                                             intent = result.data ?: return@launch
                                         )
-                                        viewModel.onSignInResult(signInResult)
+                                        signInViewModel.onSignInResult(signInResult)
                                     }
                                 }
                             }
                         )
-                        LaunchedEffect(key1 = state.isSignInSuccessful) {
-                            if (state.isSignInSuccessful){
+                        LaunchedEffect(key1 = signInState.isSignInSuccessful) {
+                            if (signInState.isSignInSuccessful){
                                 Toast.makeText(
                                     applicationContext,
                                     "Sign in successful",
                                     Toast.LENGTH_LONG
                                 ).show()
                                 navController.navigate("profile")
-                                viewModel.resetState()
+                                signInViewModel.resetState()
                             }
                         }
+
                         SignInScreen(
-                            state = state,
+                            viewModel = SignInViewModel(),
+                            state = signInState,
                             onSignInClick = {
                                 lifecycleScope.launch {
                                     val signInIntentSender = googleAuthUiClient.signIn()
@@ -95,7 +93,9 @@ class MainActivity : ComponentActivity() {
                                         ).build()
                                     )
                                 }
-                            }
+                            },
+                            onNavigateToRegister = { navController.navigate("register") },
+                            onNavigateToProfile = { navController.navigate("profile") }
                         )
                     }
                     composable("profile") {
@@ -113,6 +113,10 @@ class MainActivity : ComponentActivity() {
                                 }
                             }
                         )
+                    }
+                    composable ("register"){
+                        val viewModel = viewModel<EmailSignInViewModel>()
+
                     }
                 }
             }

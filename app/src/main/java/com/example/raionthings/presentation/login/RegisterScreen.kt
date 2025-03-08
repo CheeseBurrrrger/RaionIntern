@@ -38,8 +38,7 @@ import com.example.raionthings.presentation.navigation.Login
 
 @Composable
 fun RegisterPage(
-    navController: NavController,
-    authViewModel: AuthViewModel,
+    viewModel: SignInViewModel
 ){
     val emailFocusRequester = remember { FocusRequester() }
     val RepasswordFocus = remember { FocusRequester() }
