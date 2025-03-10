@@ -40,11 +40,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.raionteam6.presentasion.theme.ui.poppinsFontFamily
 
 @Composable
 fun Pinpassword(
-    onVerifyCode: (String) -> Unit = {}
+    navController: NavController
 ) {
     var verificationCode by remember { mutableStateOf("") }
     val focusRequester = remember { FocusRequester() }
@@ -135,7 +136,7 @@ fun Pinpassword(
             Spacer(modifier = Modifier.height(32.dp))
 
             Button(
-                onClick = { onVerifyCode(verificationCode) },
+                onClick = {navController.navigate("New_Password")},
                 enabled = verificationCode.length == 4,
                 modifier = Modifier
                     .fillMaxWidth()

@@ -73,6 +73,7 @@ fun LoginScreen(navController: NavController) {
     Column (
         modifier = Modifier.fillMaxWidth().fillMaxHeight()
             .background(color = Color.White)
+
     ){
         Spacer(modifier = Modifier.padding(100.dp))
         Text(
@@ -180,9 +181,7 @@ fun LoginScreen(navController: NavController) {
                     )
                 }
                 Button(
-                    onClick = {
-                        navController.navigate("Register_Screen")
-                    },
+                    onClick = {},
                     modifier = Modifier
                         .size(width = 360.dp, height = 90.dp)
                         .padding(vertical = 12.dp),

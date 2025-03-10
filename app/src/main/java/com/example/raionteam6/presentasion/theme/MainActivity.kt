@@ -18,6 +18,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.raionteam6.presentasion.ForgetPassword.ForgetPASS
 import com.example.raionteam6.presentasion.ForgetPassword.ForgetPASS
 import com.example.raionteam6.presentasion.LoginScreen.LoginScreen
+import com.example.raionteam6.presentasion.NewPasswordScreen.NewPasswordScreen
 import com.example.raionteam6.presentasion.Pinpassword.Pinpassword
 import com.example.raionteam6.presentasion.Register.RegisterScreen
 import com.example.raionteam6.presentasion.theme.ui.RAIONTeam6Theme
@@ -38,7 +39,10 @@ class MainActivity : ComponentActivity() {
                     ForgetPASS(navController)
                 }
                 composable ("Pin_Password"){
-                    Pinpassword()
+                    Pinpassword(navController)
+                }
+                composable("New_Password") {
+                    NewPasswordScreen()
                 }
             })
         }

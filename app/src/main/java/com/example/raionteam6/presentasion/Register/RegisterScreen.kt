@@ -62,6 +62,10 @@ fun RegisterScreen() {
     var term_and_policy by remember { mutableStateOf(false) }
     var passwordVisibility by rememberSaveable { mutableStateOf(false) }
 
+    val formIsvalid = FirstName.isNotBlank() && LastName.isNotBlank()
+            && email.isNotBlank() && username.isNotBlank() && password.isNotBlank()
+
+
 
     val PoppinsBold = FontFamily(
         Font(R.font.poppins_bold, FontWeight.Bold),
@@ -296,7 +300,8 @@ fun RegisterScreen() {
                         .size(width = 372.19.dp, height = 80.dp)
                         .padding(vertical = 12.dp),
                     colors = ButtonDefaults.buttonColors(Color(0xFF0078D7)),
-                    shape = RoundedCornerShape(18.dp)
+                    shape = RoundedCornerShape(18.dp),
+                    enabled = term_and_policy && formIsvalid
                 ) {
                     Text(
                         text = "Sign Up",
@@ -310,6 +315,12 @@ fun RegisterScreen() {
         }
 
     }
+}
+
+@Preview
+@Composable
+fun registerscreenpreview(){
+    RegisterScreen()
 }
 
 
