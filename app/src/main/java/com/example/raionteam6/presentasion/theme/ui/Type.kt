@@ -42,3 +42,9 @@ val poppinsFontFamily = FontFamily(
     Font(R.font.poppins_light, FontWeight.Light)
 )
 
+val SFProdisplayFontFamily = FontFamily(
+    Font(R.font.sfprodisplaybold, FontWeight.Bold),
+    Font(R.font.sfprodisplaymedium, FontWeight.Medium),
+    Font(R.font.sfprodisplayregular, FontWeight.Light)
+)
+

@@ -21,6 +21,7 @@ import com.example.raionteam6.presentasion.LoginScreen.LoginScreen
 import com.example.raionteam6.presentasion.NewPasswordScreen.NewPasswordScreen
 import com.example.raionteam6.presentasion.Pinpassword.Pinpassword
 import com.example.raionteam6.presentasion.Register.RegisterScreen
+import com.example.raionteam6.presentasion.SuccessNewPassword.SuccesNewPassword
 import com.example.raionteam6.presentasion.theme.ui.RAIONTeam6Theme
 
 class MainActivity : ComponentActivity() {
@@ -33,7 +34,7 @@ class MainActivity : ComponentActivity() {
                     LoginScreen(navController)
                 }
                 composable("Register_Screen") {
-                    RegisterScreen()
+                    RegisterScreen(navController)
                 }
                 composable ("Forget_Pass"){
                     ForgetPASS(navController)
@@ -42,7 +43,10 @@ class MainActivity : ComponentActivity() {
                     Pinpassword(navController)
                 }
                 composable("New_Password") {
-                    NewPasswordScreen()
+                    NewPasswordScreen(navController)
+                }
+                composable("Success_NewPassword") {
+                    SuccesNewPassword(navController)
                 }
             })
         }

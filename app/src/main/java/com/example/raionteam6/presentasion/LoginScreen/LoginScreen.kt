@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -42,6 +44,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.focusModifier
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -52,6 +55,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.raionteam6.presentasion.theme.ui.SFProdisplayFontFamily
 
 
 @Composable
@@ -59,13 +63,7 @@ fun LoginScreen(navController: NavController) {
     var Email_Username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisibility by rememberSaveable { mutableStateOf(false) }
-    val PoppinsBold = FontFamily(
-        Font(R.font.poppins_bold, FontWeight.Bold),
-        Font(R.font.poppins_black, FontWeight.Normal)
-    )
-    val Poppins = FontFamily(
-        Font(R.font.poppins_medium, FontWeight.Bold),
-    )
+
     val icon = if(passwordVisibility)
         painterResource(id = R.drawable.eye)
     else
@@ -73,15 +71,25 @@ fun LoginScreen(navController: NavController) {
     Column (
         modifier = Modifier.fillMaxWidth().fillMaxHeight()
             .background(color = Color.White)
-
     ){
-        Spacer(modifier = Modifier.padding(100.dp))
+        Spacer(modifier = Modifier.padding(20.dp))
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.Center
+        ) {
+            Image(
+                painter = painterResource(R.drawable.sajigo),
+                contentDescription = "SajigoLogo",
+                modifier = Modifier.size(width = 209.dp, height = 120.dp)
+            )
+        }
+        Spacer(modifier = Modifier.padding(30.dp))
         Text(
             text = "Login",
             color = Color.Black,
             fontSize = 31.96.sp,
-            fontFamily = PoppinsBold,
-            modifier = Modifier.padding(horizontal = 20.dp, vertical = 24.dp)
+            fontFamily = SFProdisplayFontFamily, fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 24.dp)
 
         )
 
@@ -92,18 +100,28 @@ fun LoginScreen(navController: NavController) {
             //Username container
             Text(
                 modifier = Modifier.padding(horizontal = 20.dp),
-                text = "Email atau Username",
+                text = "Email",
                 fontSize = 16.sp,
-                fontFamily = Poppins
+                fontFamily = SFProdisplayFontFamily
             )
             OutlinedTextField(
                 value = Email_Username,
                 onValueChange = {Email_Username = it},
-                placeholder = {Text(text = "Enter the email" , color = Color(0xFF0078D7) , fontFamily = Poppins)},
-
+                placeholder = {Text(
+                    text = "E-Mail",
+                    color = Color(0xFF757575),
+                    fontFamily = SFProdisplayFontFamily)},
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(R.drawable.quill_mail),
+                        contentDescription = "Email Icon",
+                        modifier = Modifier.size(width = 22.dp, height = 22.dp),
+                    )
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 12.dp, vertical = 10.dp)
+                    .size(width = 372.dp, height = 56.dp)
                     .border(
                         width = 2.dp,
                         color = Color.LightGray,
@@ -115,15 +133,18 @@ fun LoginScreen(navController: NavController) {
             )
             Text(
                 modifier = Modifier.padding(horizontal = 20.dp),
-                text = "Password",
+                text = "Kata Sandi",
                 fontSize = 16.sp,
-                fontFamily = Poppins
+                fontFamily = SFProdisplayFontFamily
             )
             //Password container
             OutlinedTextField(
                 value = password,
                 onValueChange = {password = it},
-                placeholder = {Text(text = "Enter the Password" , color = Color(0xFF0078D7), fontFamily = Poppins)},
+                placeholder = {Text(
+                    text = "Kata Sandi",
+                    color = Color(0xFF757575),
+                    fontFamily = SFProdisplayFontFamily)},
                 trailingIcon = {
                     IconButton(onClick = {
                         passwordVisibility = !passwordVisibility
@@ -138,10 +159,18 @@ fun LoginScreen(navController: NavController) {
 
                 visualTransformation = if (passwordVisibility) VisualTransformation.None
                 else PasswordVisualTransformation(),
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(R.drawable.simple_line_icons_lock),
+                        contentDescription = "Lock Icon",
+                        modifier = Modifier.size(width = 22.dp, height = 22.dp),
+                    )
+                },
 
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 12.dp, vertical = 10.dp)
+                    .size(width = 372.dp, height = 56.dp)
                     .border(
                         width = 2.dp,
                         color = Color.LightGray,
@@ -150,6 +179,7 @@ fun LoginScreen(navController: NavController) {
 
                 shape = RoundedCornerShape(24.dp)
             )
+            Spacer(modifier = Modifier.padding(8.dp))
             Column (
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.Center,
@@ -157,41 +187,34 @@ fun LoginScreen(navController: NavController) {
             ){
                 Row (
                     modifier = Modifier.fillMaxWidth().padding( horizontal = 12.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    horizontalArrangement = Arrangement.End
                 ) {
+
                     Text(
-                        text = "Sign In",
+                        text = "Lupa Kata Sandi ?",
                         fontSize = 14.sp,
-                        fontFamily = Poppins,
+                        fontFamily = SFProdisplayFontFamily,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF632713),
                         modifier = Modifier
                             .padding(vertical = 5.dp, horizontal = 12.dp)
-                            .clickable {navController.navigate("Register_Screen") },
-                        textAlign = TextAlign.Start
-
-                    )
-                    Text(
-                        text = "Forget Password ?",
-                        fontSize = 14.sp,
-                        fontFamily = Poppins,
-                        modifier = Modifier
-                            .padding(vertical = 5.dp)
                             .clickable {navController.navigate("Forget_Pass") },
                         textAlign = TextAlign.End
 
                     )
                 }
+                Spacer(modifier = Modifier.padding(8.dp))
                 Button(
                     onClick = {},
                     modifier = Modifier
-                        .size(width = 360.dp, height = 90.dp)
-                        .padding(vertical = 12.dp),
-                    colors = ButtonDefaults.buttonColors(Color(0xFF0078D7)),
-                    shape = RoundedCornerShape(18.dp)
+                        .size(width = 372.dp, height = 56.dp),
+                    colors = ButtonDefaults.buttonColors(Color(0xFF632713)),
+                    shape = RoundedCornerShape(24.dp)
                 ) {
                     Text(
                         text = "Login",
-                        fontFamily = PoppinsBold,
-                        fontWeight = FontWeight.Normal,
+                        fontFamily = SFProdisplayFontFamily,
+                        fontWeight = FontWeight.Bold,
                         fontSize = 20.sp
                     )
                 }
@@ -201,20 +224,19 @@ fun LoginScreen(navController: NavController) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 12.dp),
-                horizontalArrangement = Arrangement.Center
+                horizontalArrangement = Arrangement.SpaceBetween
             ){
                 Image(
                     painter = painterResource(id = R.drawable.line_6),
                     contentDescription = "line",
                     modifier = Modifier.padding(8.dp),
 
-
                 )
 
                 Text(
-                    text = "atau dengan",
-                    fontFamily = Poppins,
-                    fontWeight = FontWeight.Bold
+                    text = "Atau dengan",
+                    fontFamily = SFProdisplayFontFamily,
+                    fontSize = 10.sp
                 )
 
                 Image(
@@ -223,7 +245,7 @@ fun LoginScreen(navController: NavController) {
                     modifier = Modifier.padding(8.dp)
                 )
             }
-            Spacer(modifier = Modifier.padding(20.dp))
+            Spacer(modifier = Modifier.padding(10.dp))
             Row (
                 modifier = Modifier
                     .fillMaxWidth()
@@ -249,6 +271,32 @@ fun LoginScreen(navController: NavController) {
                         .clip(RoundedCornerShape(50.dp))
                         .clickable {  },
                 )
+            }
+            Spacer(modifier = Modifier.padding(50.dp))
+            Column (
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ){
+                Row (
+                    modifier = Modifier.fillMaxWidth().fillMaxHeight(),
+                    horizontalArrangement = Arrangement.Center
+                ){
+                    Text(
+                        text = "Belum punya akun?",
+                        fontFamily = SFProdisplayFontFamily,
+                        fontWeight = FontWeight.Normal
+                    )
+                    Text(
+                        text = " Daftar",
+                        fontFamily = SFProdisplayFontFamily,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(255, 165, 0),
+
+                        modifier = Modifier.clickable {navController.navigate("Register_Screen") }
+                    )
+                }
             }
         }
     }

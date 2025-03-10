@@ -1,12 +1,16 @@
 package com.example.raionteam6.presentasion.NewPasswordScreen
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -34,69 +38,88 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.raionteam6.R
+import com.example.raionteam6.presentasion.theme.ui.SFProdisplayFontFamily
 import com.example.raionteam6.presentasion.theme.ui.poppinsFontFamily
 
 @Composable
-fun NewPasswordScreen() {
+fun NewPasswordScreen(navController: NavController) {
     var password by remember { mutableStateOf("") }
     var passwordVisibility by rememberSaveable { mutableStateOf(false) }
     var newPassword by remember { mutableStateOf("") }
+    var newPasswordVisibility by rememberSaveable { mutableStateOf(false) }
+
     val icon = if (passwordVisibility)
         painterResource(id = R.drawable.eye)
     else
         painterResource(id = R.drawable.hide)
 
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
-    ) {
+    val icon2 = if (newPasswordVisibility)
+        painterResource(id = R.drawable.eye)
+    else
+        painterResource(id = R.drawable.hide)
+
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(24.dp)
-                .background(color = Color.White),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.Start
+            modifier = Modifier.fillMaxWidth().fillMaxHeight()
+                .background(color = Color.White)
 
         ) {
-            Spacer(modifier = Modifier.padding(100.dp))//Spacer
+            Spacer(modifier = Modifier.padding(20.dp))
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.sajigo),
+                    contentDescription = "SajigoLogo",
+                    modifier = Modifier.size(width = 209.dp, height = 120.dp)
+                )
+            }
+            Spacer(modifier = Modifier.padding(30.dp)) //enter
             Text(
-                text = "Reset Password",
+                text = "Atur Ulang Kata Sandi",
                 fontSize = 32.sp,
                 color = Color.Black,
-                modifier = Modifier.padding(bottom = 8.dp),
-                fontFamily = poppinsFontFamily, fontWeight = FontWeight.Bold
+                modifier = Modifier.padding(horizontal = 20.dp),
+                fontFamily = SFProdisplayFontFamily, fontWeight = FontWeight.Bold
 
             )
             Spacer(modifier = Modifier.padding(10.dp))
 
             Text(
-                text = "Set a new password for your account so you can log in and access all features",
+                text = "Tetapkan kata sandi baru untuk akun Anda, sehingga Anda dapat masuk dan mengakses semua fitur",
                 fontSize = 14.sp,
                 color = Color.DarkGray,
-                modifier = Modifier.padding(bottom = 24.dp),
-                fontFamily = poppinsFontFamily, fontWeight = FontWeight.Normal
+                modifier = Modifier.padding(horizontal = 20.dp),
+                fontFamily = SFProdisplayFontFamily, fontWeight = FontWeight.Normal
             )
-            Spacer(modifier = Modifier.padding(12.dp))
+
+            Spacer(modifier = Modifier.height(18.dp))
             Text(
-                text = "Current Password",
+                text = "Kata Sandi",
                 fontSize = 14.sp,
                 color = Color.DarkGray,
-                modifier = Modifier.padding(bottom = 8.dp),
-                fontFamily = poppinsFontFamily, fontWeight = FontWeight.Normal
+                modifier = Modifier.padding(horizontal = 20.dp),
+                fontFamily = SFProdisplayFontFamily, fontWeight = FontWeight.Normal
             )
             OutlinedTextField(
                 value = password,
                 onValueChange = { password = it },
                 placeholder = {
                     Text(
-                        text = "Enter the current password",
-                        color = Color(0xFF0078D7),
-                        fontFamily = poppinsFontFamily
+                        text = "Kata Sandi",
+                        color = Color(0xFF757575),
+                        fontFamily = SFProdisplayFontFamily
                     )
                 },
-
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.simple_line_icons_lock),
+                        contentDescription = "Icon lock",
+                        modifier = Modifier.size(width = 22.dp, height = 22.dp)
+                    )
+                },
                 trailingIcon = {
                     IconButton(onClick = {
                         passwordVisibility = !passwordVisibility
@@ -114,6 +137,7 @@ fun NewPasswordScreen() {
 
                 modifier = Modifier
                     .fillMaxWidth()
+                    .padding(horizontal = 12.dp, vertical = 10.dp)
                     .border(
                         width = 2.dp,
                         color = Color.LightGray,
@@ -122,58 +146,75 @@ fun NewPasswordScreen() {
 
                 shape = RoundedCornerShape(24.dp)
             )
-            Spacer(modifier = Modifier.padding(8.dp))
             Text(
-                text = "New Password",
+                text = "Konfirmasi Kata Sandi",
                 fontSize = 14.sp,
                 color = Color.DarkGray,
-                fontFamily = poppinsFontFamily, fontWeight = FontWeight.Normal
+                modifier = Modifier.padding(horizontal = 20.dp),
+                fontFamily = SFProdisplayFontFamily, fontWeight = FontWeight.Normal
             )
             OutlinedTextField(
                 value = newPassword,
                 onValueChange = { newPassword = it },
                 placeholder = {
                     Text(
-                        text = "Minimum 8 characters",
-                        color = Color(0xFF0078D7),
-                        fontFamily = poppinsFontFamily
+                        text = "Kata sandi harus sama",
+                        color = Color(0xFF757575),
+                        fontFamily = SFProdisplayFontFamily
                     )
                 },
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.simple_line_icons_lock),
+                        contentDescription = "Icon lock",
+                        modifier = Modifier.size(width = 22.dp, height = 22.dp)
+                    )
+                },
+                trailingIcon = {
+                    IconButton(onClick = {
+                        newPasswordVisibility = !newPasswordVisibility
+                    }) {
+                        Icon(
+                            painter = icon2,
+                            contentDescription = "Visibility Icon",
+                            modifier = Modifier.size(width = 24.dp, height = 24.dp)
+                        )
+                    }
+                },
+
+
                 modifier = Modifier
                     .fillMaxWidth()
+                    .padding(horizontal = 12.dp, vertical = 10.dp)
                     .border(
                         width = 2.dp,
                         color = Color.LightGray,
                         shape = RoundedCornerShape(24.dp)
                     ),
-                visualTransformation = PasswordVisualTransformation(),
+
+                visualTransformation = if (newPasswordVisibility) VisualTransformation.None
+                else PasswordVisualTransformation(),
                 shape = RoundedCornerShape(24.dp)
             )
-            Spacer(modifier = Modifier.padding(16.dp))
+            Spacer(modifier = Modifier.height(18.dp))
             Button(
-                onClick = { },
+                onClick = {navController.navigate("Success_NewPassword") },
                 modifier = Modifier
                     .fillMaxWidth()
+                    .padding(horizontal = 12.dp, vertical = 10.dp)
                     .size(width = 372.19.dp, height = 57.74.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF0078D7)
+                    containerColor = Color(0xFF632713)
                 ),
-                shape = RoundedCornerShape(18.dp)
+                shape = RoundedCornerShape(24.dp),
+                enabled = password == newPassword
             ) {
                 Text(
-                    text = "Next",
+                    text = "Lanjut",
                     color = Color.White,
                     fontSize = 20.62.sp,
-                    fontFamily = poppinsFontFamily, fontWeight = FontWeight.Bold
+                    fontFamily = SFProdisplayFontFamily, fontWeight = FontWeight.Bold
                 )
             }
         }
     }
-}
-
-
-@Preview
-@Composable
-fun PreviewNewPass(){
-    NewPasswordScreen()
-}

@@ -1,5 +1,6 @@
 package com.example.raionteam6.presentasion.Pinpassword
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -31,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -41,6 +43,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.raionteam6.R
+import com.example.raionteam6.presentasion.theme.ui.SFProdisplayFontFamily
 import com.example.raionteam6.presentasion.theme.ui.poppinsFontFamily
 
 @Composable
@@ -53,11 +57,6 @@ fun Pinpassword(
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
     }
-
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
-    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -65,18 +64,29 @@ fun Pinpassword(
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.Top
         ) {
-            Spacer(modifier = Modifier.padding(100.dp))
+            Spacer(modifier = Modifier.padding(20.dp))
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.sajigo),
+                    contentDescription = "SajigoLogo",
+                    modifier = Modifier.size(width = 209.dp, height = 120.dp)
+                )
+            }
+            Spacer(modifier = Modifier.padding(30.dp))
             Text(
-                text = "Enter The 4-Digit Code",
+                text = "Masukan Kode 4 Digit",
                 fontSize = 32.sp,
-                fontFamily = poppinsFontFamily,
+                fontFamily = SFProdisplayFontFamily,
                 fontWeight = FontWeight.Bold,
                 color = Color.Black,
                 modifier = Modifier.padding(bottom = 16.dp)
             )
 
             Text(
-                text = "Enter the 4-digit code you received in your email",
+                text = "Masukkan kode 4 digit yang Anda terima di email Anda",
                 fontSize = 14.sp,
                 color = Color.Gray,
                 fontFamily = poppinsFontFamily,
@@ -142,18 +152,17 @@ fun Pinpassword(
                     .fillMaxWidth()
                     .size(width = 372.19.dp, height = 57.74.dp),
                     colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF0078D7),
+                    containerColor = Color(0xFF632713),
                 ),
-                shape = RoundedCornerShape(18.dp)
+                shape = RoundedCornerShape(24.dp)
             ) {
                 Text(
-                    text = "Next",
+                    text = "Lanjut",
                     color = Color.White,
                     fontSize = 20.sp,
                     fontFamily = poppinsFontFamily
                 )
             }
         }
-    }
 }
 
