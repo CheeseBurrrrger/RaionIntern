@@ -149,6 +149,11 @@ fun RegisterPage(
                                 viewModel.viewModelScope.launch {
                                     val result = Email.signup(email, password)
                                     viewModel.onSignUpResult(result)
+                                    Toast.makeText(
+                                        context,
+                                        "Signed Up!",
+                                        Toast.LENGTH_LONG
+                                    ).show()
                                 }
                             } else {
                                 Toast.makeText(context, "Please fill all fields", Toast.LENGTH_SHORT).show()            }
@@ -184,6 +189,11 @@ fun RegisterPage(
                 viewModel.viewModelScope.launch {
                     val result = Email.signup(email, password)
                     viewModel.onSignUpResult(result)
+                    Toast.makeText(
+                        context,
+                        "Signed Up!",
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
             } else {
                 Toast.makeText(context, "Please fill all fields", Toast.LENGTH_SHORT).show()            }

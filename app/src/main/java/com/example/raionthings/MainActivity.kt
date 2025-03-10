@@ -27,6 +27,7 @@ import com.example.raionthings.presentation.login.ProfileScreen
 import com.example.raionthings.presentation.login.RegisterPage
 import com.example.raionthings.presentation.login.SignInScreen
 import com.example.raionthings.presentation.login.SignInViewModel
+import com.example.raionthings.presentation.login.UserData
 import com.google.android.gms.auth.api.identity.Identity
 import kotlinx.coroutines.launch
 
@@ -98,6 +99,8 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable("profile") {
+                        val signInViewModel = viewModel<SignInViewModel>()
+
                         val googleUser = googleAuthUiClient.getSignedInUser()?.let { googleUser ->
                             UserData(
                                 userId = googleUser.userId,
@@ -114,7 +117,11 @@ class MainActivity : ComponentActivity() {
                                 username = emailUser.username,
                                 profilePictureUrl = emailUser.profilePictureUrl
                             )
+
                         }
+                        Log.d("Tessting", googleUser.toString())
+
+                        Log.d("Tessting", emailUser.toString())
 
                         val userData = googleUser ?: emailUser
                         ProfileScreen (
@@ -123,13 +130,14 @@ class MainActivity : ComponentActivity() {
                                 lifecycleScope.launch {
                                     googleAuthUiClient.signOut()
                                     email.signout()
+                                    signInViewModel.resetState()
                                     Toast.makeText(
                                         applicationContext,
                                         "Signed out",
                                         Toast.LENGTH_LONG
                                     ).show()
-//                                    Log.d("Login",googleUser.toString())
-//                                    Log.d("Login",emailUser.toString())
+                                    Log.d("Login",googleUser.toString())
+                                    Log.d("Login",emailUser.toString())
                                     navController.popBackStack()
                                 }
                             }

@@ -15,9 +15,11 @@ class EmailAuthUIClient {
             val Human = Otenti.user
             EmailSignInResult(
                 data = Otenti?.run {
-                    EmailUserData(
+                    UserData(
                         userId = Human!!.uid,
-                        email = Human.email.toString()
+                        email = Human.email.toString(),
+                        username = Human.displayName,
+                        profilePictureUrl = Human.photoUrl.toString()
                     )
                 },
                 errorMessage = null
@@ -54,10 +56,10 @@ class EmailAuthUIClient {
         }
     }
 
-    fun getCurrentUser(): EmailUserData? {
+    fun getCurrentUser(): UserData? {
         val user = auth.currentUser
         return user?.let {
-            EmailUserData(
+            UserData(
                 userId = it.uid,
                 email = it.email.toString(),
                 username = it.displayName,

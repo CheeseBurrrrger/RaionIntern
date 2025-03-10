@@ -36,7 +36,7 @@ import coil3.compose.AsyncImage
             Log.d("ProfileScreen",userData.toString())
 
             if (userData != null) {
-                Text("Welcome, ${userData.username ?: "User"}!")
+                Text("Welcome, ${userData.email ?: "User"}!")
             } else {
                 Text("No user data found")
             }
