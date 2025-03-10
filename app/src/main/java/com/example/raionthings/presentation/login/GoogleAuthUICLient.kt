@@ -42,6 +42,7 @@ class GoogleAuthUICLient (
                 data = user?.run {
                     UserData(
                         userId = uid,
+                        email = email,
                         username = displayName,
                         profilePictureUrl = photoUrl?.toString()
                     )
@@ -71,6 +72,7 @@ class GoogleAuthUICLient (
     fun getSignedInUser():UserData? = auth.currentUser?.run {
         UserData(
             userId = uid,
+            email =email,
             username = displayName,
             profilePictureUrl = photoUrl?.toString()
         )

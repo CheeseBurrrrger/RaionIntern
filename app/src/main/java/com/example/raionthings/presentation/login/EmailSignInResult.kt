@@ -6,6 +6,8 @@ data class EmailSignInResult(
 )
 
 data class EmailUserData(
-    val userId: String,
+    val userId: String?,
     val email: String,
+    val username: String? = null,
+    val profilePictureUrl: String? = null
 )

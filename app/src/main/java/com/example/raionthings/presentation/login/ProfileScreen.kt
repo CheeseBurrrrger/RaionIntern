@@ -1,5 +1,6 @@
 package com.example.raionthings.presentation.login
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -32,6 +33,13 @@ import coil3.compose.AsyncImage
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ){
+            Log.d("ProfileScreen",userData.toString())
+
+            if (userData != null) {
+                Text("Welcome, ${userData.username ?: "User"}!")
+            } else {
+                Text("No user data found")
+            }
             if (userData?.profilePictureUrl!=null){
                 AsyncImage(
                     model = userData.profilePictureUrl,
@@ -53,7 +61,7 @@ import coil3.compose.AsyncImage
                 Spacer(modifier = Modifier.height(16.dp))
             }
             Button(onClick = onSignOut) {
-                Text("Sign Cokkkk")
+                Text("Sign Out")
             }
         }
     }

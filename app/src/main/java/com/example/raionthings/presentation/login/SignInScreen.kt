@@ -11,14 +11,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -193,8 +191,8 @@ import kotlinx.coroutines.launch
 fun SignInScreen(
     viewModel: SignInViewModel,
     state: SignInState,
+    Email: EmailAuthUIClient,
     onSignInClick: () -> Unit,
-    onNavigateToProfile: () -> Unit,
     onNavigateToRegister: () -> Unit
 ) {
     val emailFocusRequester = remember { FocusRequester() }
@@ -210,27 +208,14 @@ fun SignInScreen(
         Font(R.font.medium, FontWeight.Medium),
     )
 
-    // Collect state from ViewModel
-    val state by viewModel.state.collectAsState()
 
-    LaunchedEffect(key1 = state.error) {  // Changed to observe ViewModel's error state
-        state.error?.let { error ->
-            Toast.makeText(
-                context,
-                error,
-                Toast.LENGTH_LONG
-            ).show()
-            // Clear error after showing
+    // Show error messages
+    LaunchedEffect(key1 = state.signInError) {
+        state.signInError?.let { error ->
+            Toast.makeText(context, error, Toast.LENGTH_LONG).show()
             viewModel.resetState()
         }
     }
-
-    LaunchedEffect(key1 = state.isAuthenticated) {
-        if (state.isAuthenticated) {
-            onNavigateToProfile()
-        }
-    }
-
     Box(modifier = Modifier.fillMaxWidth()) {
         Column(
             modifier = Modifier
@@ -287,7 +272,9 @@ fun SignInScreen(
                                 ).show()
                             } else {
                                 viewModel.viewModelScope.launch {
-                                    viewModel.login(email, password)
+                                    viewModel.onGoogleSignInSuccess()
+                                    val result = Email.login(email, password)
+                                    viewModel.onSignInResult(result)
                                 }
                             }
                             true
@@ -309,36 +296,27 @@ fun SignInScreen(
                 keyboardActions = KeyboardActions(
                     onDone = {
                         viewModel.viewModelScope.launch {
-                            viewModel.login(email, password)
+                            viewModel.onGoogleSignInSuccess()
+                            val result = Email.login(email, password)
+                            viewModel.onSignInResult(result)
                         }
                     }
                 )
             )
             Spacer(modifier = Modifier.height(60.dp))
-            Button(
-                onClick = {
-                    if (email.isEmpty() || password.isEmpty()) {
-                        Toast.makeText(context, "Please fill all fields", Toast.LENGTH_SHORT).show()
-                    } else {
-                        viewModel.viewModelScope.launch {
-                            val result = viewModel.login(email, password)
-                            viewModel.onSignInResult(result)
-                        }
+            Button(onClick = {
+                if (email.isNotEmpty() && password.isNotEmpty()) {
+                    viewModel.viewModelScope.launch {
+                        viewModel.onGoogleSignInSuccess()
+                        val result = Email.login(email, password)
+                        viewModel.onSignInResult(result)
                     }
-                },
-                enabled = !state.isLoading
-            ) {
-                if (state.isLoading) {
-                    CircularProgressIndicator(color = Color.White)
                 } else {
-                    Text("Login",
-                        fontFamily = sfApple,
-                        fontWeight = FontWeight.SemiBold)
-                }
-            }
+                    Toast.makeText(context, "Please fill all fields", Toast.LENGTH_SHORT).show()                }
+            }) { Text("Login") }
 
             Spacer(modifier = Modifier.height(60.dp))
-            TextButton(onClick = onNavigateToRegister) {  // Changed to navigate to register
+            TextButton(onClick = onNavigateToRegister) {
                 Text("Don't have an account? Sign up here",
                     fontFamily = sfApple,
                     fontWeight = FontWeight.SemiBold)

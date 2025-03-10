@@ -1,62 +1,72 @@
 package com.example.raionthings.presentation.login
 
-import android.content.Context
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.tasks.await
 
-class EmailAuthUIClient (
-    private val context: Context,
-){
-    private val auth = FirebaseAuth.getInstance()
+class EmailAuthUIClient {
+    private val auth :FirebaseAuth = FirebaseAuth.getInstance()
 
     suspend fun login(email: String, password: String): EmailSignInResult {
-        if (email.isEmpty() || password.isEmpty()) {
-            return EmailSignInResult(
+        return try {
+            val Otenti = auth.signInWithEmailAndPassword(email,password).await()
+            val Human = Otenti.user
+            EmailSignInResult(
+                data = Otenti?.run {
+                    EmailUserData(
+                        userId = Human!!.uid,
+                        email = Human.email.toString()
+                    )
+                },
+                errorMessage = null
+            )
+        }catch (e: Exception){
+            e.printStackTrace()
+            if(e is CancellationException) throw e
+            EmailSignInResult(
                 data = null,
-                errorMessage = "Kindly fill your email and password"
+                errorMessage = e.message
             )
         }
+    }
 
+    suspend fun signup(email: String, password: String): SignInResult {
         return try {
-            val user = auth.signInWithEmailAndPassword(email, password).await().user
-
+            val authResult = auth.createUserWithEmailAndPassword(email, password).await()
+            val user = authResult.user
             if (user != null) {
-                EmailSignInResult(
-                    data = user?.run {
-                        EmailUserData(
-                            userId = uid,
-                            email = email
-                        )
-                    },
+                SignInResult(
+                    data = UserData(
+                        userId = user.uid,
+                        email = user.email,
+                        username = user.displayName,
+                        profilePictureUrl = null
+                    ),
                     errorMessage = null
                 )
             } else {
-                EmailSignInResult(
-                    data = null,
-                    errorMessage = "User not found"
-                )
+                SignInResult(data = null, errorMessage = "Sign up failed")
             }
         } catch (e: Exception) {
-            e.printStackTrace()
-            EmailSignInResult(
-                data = null,
-                errorMessage = e.message ?: "Authentication failed"
+            SignInResult(data = null, errorMessage = e.message)
+        }
+    }
+
+    fun getCurrentUser(): EmailUserData? {
+        val user = auth.currentUser
+        return user?.let {
+            EmailUserData(
+                userId = it.uid,
+                email = it.email.toString(),
+                username = it.displayName,
+                profilePictureUrl = it.photoUrl.toString()
             )
         }
     }
-
-    suspend fun signOut(){
+    fun signout(){
         Firebase.auth.signOut()
+
     }
-
-    suspend fun getEmailSignedInUser(){
-        try {
-
-        }catch (e: Exception){
-            throw e
-        }
-    }
-
 }

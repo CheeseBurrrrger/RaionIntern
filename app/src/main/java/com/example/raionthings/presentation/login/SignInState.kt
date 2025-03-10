@@ -2,5 +2,6 @@ package com.example.raionthings.presentation.login
 
 data class SignInState(
     val isSignInSuccessful: Boolean = false,
-    val signInError: String? = null
+    val signInError: String? = null,
+    val isSignedUp : Boolean?= null
 )

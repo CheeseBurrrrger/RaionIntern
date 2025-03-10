@@ -18,7 +18,6 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -33,29 +32,39 @@ import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import com.example.raionthings.presentation.navigation.Login
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 
 @Composable
 fun RegisterPage(
-    viewModel: SignInViewModel
-){
+    state: SignInState,
+    Email: EmailAuthUIClient,
+    viewModel: SignInViewModel,
+    onNavigateToLogin: () -> Unit
+    ){
     val emailFocusRequester = remember { FocusRequester() }
     val RepasswordFocus = remember { FocusRequester() }
     val passwordFocusRequester = remember { FocusRequester() }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var Repassword by remember { mutableStateOf("") }
-    val authState = authViewModel.auth_State.observeAsState()
     val context = LocalContext.current
-    LaunchedEffect(authState.value) {
-         when (authState.value){
-             is AuthState.SignedUp -> navController.navigate(Login)
-             is AuthState.Error -> Toast.makeText(context,
-                 (authState.value as AuthState.Error).message,Toast.LENGTH_SHORT).show()
-             else -> Unit
-         }
+
+    LaunchedEffect(key1 = state.isSignedUp) {
+        if (state.isSignedUp == true) {
+            onNavigateToLogin()
+            viewModel.resetState()
+        }
     }
+
+    // Show error messages
+    LaunchedEffect(key1 = state.signInError) {
+        state.signInError?.let { error ->
+            Toast.makeText(context, error, Toast.LENGTH_LONG).show()
+            viewModel.resetState()
+        }
+    }
+
     Column (
         modifier = Modifier
             .fillMaxSize(),
@@ -102,9 +111,9 @@ fun RegisterPage(
                 .onKeyEvent { event ->
                     if (event.key == Key.Enter) ({
                         if (email.isEmpty() || password.isEmpty() )
-                        {RepasswordFocus.requestFocus()}
+                        {passwordFocusRequester.requestFocus()}
                         else {
-                            authViewModel.signup(email, password)
+                            RepasswordFocus.requestFocus()
                             true
                         }
                     }) as Boolean else {
@@ -136,7 +145,13 @@ fun RegisterPage(
                         if (email.isEmpty() || password.isEmpty() ) {Toast.makeText(context, "Please make sure u fill all fields", Toast.LENGTH_SHORT).show()}
                         else if (Repassword!=password){Toast.makeText(context, "kindly check ur password", Toast.LENGTH_SHORT).show()}
                         else {
-                            authViewModel.signup(email, password)
+                            if (email.isNotEmpty() && password.isNotEmpty() && Repassword == password) {
+                                viewModel.viewModelScope.launch {
+                                    val result = Email.signup(email, password)
+                                    viewModel.onSignUpResult(result)
+                                }
+                            } else {
+                                Toast.makeText(context, "Please fill all fields", Toast.LENGTH_SHORT).show()            }
                             true
                         }
                     }) as Boolean else {
@@ -153,21 +168,27 @@ fun RegisterPage(
             singleLine = true,
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
             keyboardActions = KeyboardActions(
-                onDone = { authViewModel.signup(email, password) }
+                onDone = {
+                    if (email.isNotEmpty() && password.isNotEmpty() && Repassword == password) {
+                        viewModel.viewModelScope.launch {
+                            val result = Email.signup(email, password)
+                            viewModel.onSignUpResult(result)
+                        }
+                    } else {
+                        Toast.makeText(context, "Please fill all fields", Toast.LENGTH_SHORT).show()            }
+                }
             )
         )
         Button(onClick = {
-            if (email.isEmpty() || password.isEmpty() || Repassword.isEmpty())
-            {Toast.makeText(context, "Please fill in all fields", Toast.LENGTH_SHORT).show()}
-            else if(Repassword!=password){Toast.makeText(context, "Please make sure there is no typo i your password", Toast.LENGTH_SHORT).show()}
-            else {
-                authViewModel.signup(email, password)
-                true
-            }
-        }) {
-            Text("Sign Up")
-        }
-        TextButton(onClick = {navController.navigate(Login)}) {
+            if (email.isNotEmpty() && password.isNotEmpty() && Repassword == password) {
+                viewModel.viewModelScope.launch {
+                    val result = Email.signup(email, password)
+                    viewModel.onSignUpResult(result)
+                }
+            } else {
+                Toast.makeText(context, "Please fill all fields", Toast.LENGTH_SHORT).show()            }
+        }) { Text("Sign Up") }
+        TextButton(onClick = onNavigateToLogin){
             Text("Already have an account?, Sign In here")
         }
     }
