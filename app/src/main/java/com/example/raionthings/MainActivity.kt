@@ -106,7 +106,8 @@ class MainActivity : ComponentActivity() {
                                 userId = googleUser.userId,
                                 email = googleUser.email,
                                 username = googleUser.username,
-                                profilePictureUrl = googleUser.profilePictureUrl
+                                profilePictureUrl = googleUser.profilePictureUrl,
+                                address = null
                             )
                         }
 
@@ -115,7 +116,8 @@ class MainActivity : ComponentActivity() {
                                 userId = emailUser.userId,
                                 email = emailUser.email,
                                 username = emailUser.username,
-                                profilePictureUrl = emailUser.profilePictureUrl
+                                profilePictureUrl = emailUser.profilePictureUrl,
+                                address = null
                             )
 
                         }

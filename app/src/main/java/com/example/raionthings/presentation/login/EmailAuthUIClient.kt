@@ -19,7 +19,8 @@ class EmailAuthUIClient {
                         userId = Human!!.uid,
                         email = Human.email.toString(),
                         username = Human.displayName,
-                        profilePictureUrl = Human.photoUrl.toString()
+                        profilePictureUrl = Human.photoUrl.toString(),
+                        address = null
                     )
                 },
                 errorMessage = null
@@ -44,7 +45,8 @@ class EmailAuthUIClient {
                         userId = user.uid,
                         email = user.email,
                         username = user.displayName,
-                        profilePictureUrl = null
+                        profilePictureUrl = null,
+                        address = null
                     ),
                     errorMessage = null
                 )
@@ -63,10 +65,15 @@ class EmailAuthUIClient {
                 userId = it.uid,
                 email = it.email.toString(),
                 username = it.displayName,
-                profilePictureUrl = it.photoUrl.toString()
+                profilePictureUrl = it.photoUrl.toString(),
+                address = null
             )
         }
     }
+
+//    fun resetPassword(){
+//        auth.sendPasswordResetEmail()
+//    }
     fun signout(){
         Firebase.auth.signOut()
 

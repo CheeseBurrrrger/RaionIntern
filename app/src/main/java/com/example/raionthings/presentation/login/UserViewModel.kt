@@ -1,8 +1,6 @@
 package com.example.raionthings.presentation.login
 
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.raionthings.domain.model.User
 import com.google.firebase.auth.FirebaseAuth
@@ -17,25 +15,25 @@ import kotlinx.coroutines.tasks.await
 
 class UserViewModel() :  ViewModel() {
     private val userCollectionRef = Firebase.firestore.collection("Users")
-    private val authState = MutableLiveData<AuthState>()
-    val auth_State : LiveData<AuthState> = authState
+//    private val authState = MutableLiveData<AuthState>()
+//    val auth_State : LiveData<AuthState> = authState
     private val TAG = "FirestoreExample"
 
     val auth = FirebaseAuth.getInstance()
 
-    fun addUser(firstName:String, lastName:String){
-        val userr = Firebase.auth.currentUser
-        if (auth_State.value == (AuthState.Unuthenticated)) {
-            Log.d("dunno","error cak")
-            authState.value= AuthState.Unuthenticated
-        }else{
-            val user = userr?.let { User(it.uid,userr.uid,userr.email.toString(),firstName,lastName) }
-            Log.d("dunno",user.toString())
-            if (user != null) {
-                saveUser(user)
-            }
-        }
-    }
+//    fun addUser(firstName:String, lastName:String){
+//        val userr = Firebase.auth.currentUser
+//        if (auth_State.value == (AuthState.Unuthenticated)) {
+//            Log.d("dunno","error cak")
+//            authState.value= AuthState.Unuthenticated
+//        }else{
+//            val user = userr?.let { User(it.uid,userr.uid,userr.email.toString(),firstName,lastName) }
+//            Log.d("dunno",user.toString())
+//            if (user != null) {
+//                saveUser(user)
+//            }
+//        }
+//    }
 
     fun saveUser(user: User) = CoroutineScope(Dispatchers.IO).launch{
         val userr = Firebase.auth.currentUser
