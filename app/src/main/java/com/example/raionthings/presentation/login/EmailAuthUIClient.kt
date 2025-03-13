@@ -1,5 +1,6 @@
 package com.example.raionthings.presentation.login
 
+import com.example.raionthings.presentation.profile.ProfileViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -58,14 +59,31 @@ class EmailAuthUIClient {
         }
     }
 
+//    fun getCurrentUser(): UserData? {
+//        val user = auth.currentUser
+//        return user?.let {
+//            UserData(
+//                userId = it.uid,
+//                email = it.email.toString(),
+//                username = it.displayName,
+//                profilePictureUrl = it.photoUrl.toString(),
+//                address = null
+//            )
+//        }
+//    }
+
     fun getCurrentUser(): UserData? {
+        val id = auth.currentUser?.uid
+        if (id != null) {
+            ProfileViewModel().getUserData(id)
+        }
         val user = auth.currentUser
         return user?.let {
             UserData(
                 userId = it.uid,
                 email = it.email.toString(),
                 username = it.displayName,
-                profilePictureUrl = it.photoUrl.toString(),
+                profilePictureUrl = it.photoUrl?.toString(),
                 address = null
             )
         }

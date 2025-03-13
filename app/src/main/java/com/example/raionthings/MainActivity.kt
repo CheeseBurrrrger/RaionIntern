@@ -14,6 +14,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -28,8 +30,12 @@ import com.example.raionthings.presentation.login.RegisterPage
 import com.example.raionthings.presentation.login.SignInScreen
 import com.example.raionthings.presentation.login.SignInViewModel
 import com.example.raionthings.presentation.login.UserData
+import com.example.raionthings.presentation.profile.ProfileViewModel
 import com.google.android.gms.auth.api.identity.Identity
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 class MainActivity : ComponentActivity() {
     private val googleAuthUiClient by lazy {
@@ -54,7 +60,7 @@ class MainActivity : ComponentActivity() {
                     composable("sign_in") {
                         val signInViewModel = viewModel<SignInViewModel>()
                         val signInState by signInViewModel.state.collectAsStateWithLifecycle()
-
+                        var userData by remember { mutableStateOf<UserData?>(null) }
                         val launcher = rememberLauncherForActivityResult(
                             contract = ActivityResultContracts.StartIntentSenderForResult(),
                             onResult = { result ->
@@ -69,7 +75,7 @@ class MainActivity : ComponentActivity() {
                             }
                         )
                         LaunchedEffect(key1 = signInState.isSignInSuccessful) {
-                            if (signInState.isSignInSuccessful){
+                            if (signInState.isSignInSuccessful) {
                                 Toast.makeText(
                                     applicationContext,
                                     "Sign in successful",
@@ -100,32 +106,43 @@ class MainActivity : ComponentActivity() {
                     }
                     composable("profile") {
                         val signInViewModel = viewModel<SignInViewModel>()
+                        val googleUser = googleAuthUiClient.getSignedInUser()?.userId
+                        val emailUser = email.getCurrentUser()?.userId
+                        var currentUserId by remember { mutableStateOf(googleUser ?: emailUser) }
+                        var userData by remember { mutableStateOf<UserData?>(null) }
+                        Log.d("karenuser", currentUserId.toString())
+                        Log.d("ProfileScreen", "Google User: $googleUser, Email User: $emailUser")
+                        LaunchedEffect(Unit) {
+                            val id = googleAuthUiClient.getSignedInUser()?.userId ?: email.getCurrentUser()?.userId
+                            currentUserId = id
+                            Log.d("LaunchedEffect", "Triggered with ID: $currentUserId")
+                            currentUserId?.let {
+                                try {
+                                    Log.d("TryBlock", "Fetching document for $currentUserId")
+                                    val document = Firebase.firestore
+                                        .collection("Profile")
+                                        .document(currentUserId!!)
+                                        .get()
+                                        .await()
 
-                        val googleUser = googleAuthUiClient.getSignedInUser()?.let { googleUser ->
-                            UserData(
-                                userId = googleUser.userId,
-                                email = googleUser.email,
-                                username = googleUser.username,
-                                profilePictureUrl = googleUser.profilePictureUrl,
-                                address = null
-                            )
+                                    Log.d("DocumentData", "Document: $document")
+                                    if (document.exists()) {
+                                        userData = document.toObject(UserData::class.java)
+                                        Log.d("UserExist", "Existing user: $userData")
+                                    } else {
+                                        Log.e("NewUser", "Adding new profile")
+                                        userData = EmailAuthUIClient().getCurrentUser()
+                                        userData?.let { ProfileViewModel().addNewProfile(it) }
+                                    }
+                                } catch (e: Exception) {
+                                    Log.e("FirestoreError", "Error fetching user", e)
+                                } finally {
+                                    Log.e("FinallyBlock", "Finally block executed")
+                                }
+                            }
                         }
 
-                        val emailUser = email.getCurrentUser()?.let { emailUser ->
-                            UserData(
-                                userId = emailUser.userId,
-                                email = emailUser.email,
-                                username = emailUser.username,
-                                profilePictureUrl = emailUser.profilePictureUrl,
-                                address = null
-                            )
 
-                        }
-                        Log.d("Tessting", googleUser.toString())
-
-                        Log.d("Tessting", emailUser.toString())
-
-                        val userData = googleUser ?: emailUser
                         ProfileScreen (
                             userData = userData,
                             onSignOut = {
@@ -139,7 +156,7 @@ class MainActivity : ComponentActivity() {
                                         Toast.LENGTH_LONG
                                     ).show()
                                     Log.d("Login",googleUser.toString())
-                                    Log.d("Login",emailUser.toString())
+                                    Log.d("Logins",emailUser.toString())
                                     navController.popBackStack()
                                 }
                             }
@@ -166,8 +183,3 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
-
-
-
-

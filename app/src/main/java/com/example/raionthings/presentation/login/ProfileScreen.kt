@@ -2,163 +2,199 @@ package com.example.raionthings.presentation.login
 
 import android.net.Uri
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
-import com.example.raionthings.presentation.profile.ProfileUIClient
+import com.example.raionthings.R
+import com.example.raionthings.presentation.profile.ProfileViewModel
 import com.example.raionthings.utils.uriToByteArray
 
 
 @Composable
-    fun ProfileScreen(
-        userData: UserData?,
-        onSignOut: ()-> Unit
-    ) {
-        Column (
-            modifier = Modifier
-                .fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ){
-            var imageUri by remember { mutableStateOf<Uri?>(null) }
-            var imageUrl by remember { mutableStateOf("") }
-            val context = LocalContext.current
-            val launcher = rememberLauncherForActivityResult(
-                contract =
-                    ActivityResultContracts.GetContent()
-            ) { uri: Uri? ->
-                imageUri = uri
-            }
+fun ProfileScreen(
+    userData: UserData?,
+    onSignOut: () -> Unit
+) {
+    var imageUri by remember { mutableStateOf<Uri?>(null) }
+    var imageUrl by remember { mutableStateOf("") }
+    val context = LocalContext.current
+    var forceRefresh by remember { mutableStateOf(0) }
 
-            Button(onClick = {launcher.launch("image/*")}) {
-                Text("choose image")
-            }
-            if (imageUri!=null){
-                Button(onClick = {
-                    val imageByteArray = imageUri?.uriToByteArray(context)
-                    imageByteArray?.let {
-                        if (userData != null) {
-                            ProfileUIClient().uploadProfilePicture(userData,imageByteArray)
-                        }
-                    }
-                    Log.d("test upload", imageByteArray.toString())
-                }) {
-                    Text("Upload Image")
+    var username by remember { mutableStateOf(userData?.username ?: "") }
+    var email by remember { mutableStateOf(userData?.email ?: "") }
+    var address by remember { mutableStateOf(userData?.address ?: "") }
+
+    Log.d("Masuk pak", userData.toString())
+    fun loadProfilePicture() {
+        userData?.let {
+            ProfileViewModel().readProfilePicture(it) { newUrl ->
+                imageUrl = if (newUrl.isNotEmpty()) {
+                    "$newUrl?timestamp=${System.currentTimeMillis()}"
+                } else {
+                    newUrl
                 }
-            }
-
-            if(userData?.profilePictureUrl!=null){
-                profilePic(userData.profilePictureUrl)
-            }else if (imageUrl!=null){
-                profilePic(imageUrl)
-            }
-
-            Log.d("ProfileScreen",userData.toString())
-            if (userData != null) {
-                ProfileUIClient().addProfile(userData)
-                Log.d("CekProfil",userData.toString())
-            }
-
-            if (userData != null) {
-                Text("Welcome, ${userData.email ?: "User"}!")
-            } else {
-                Text("No user data found")
-            }
-
-            if (userData?.username !=null){
-                Text(
-                    text = userData.username,
-                    fontWeight = FontWeight.SemiBold,
-                    textAlign = TextAlign.Center,
-                    fontSize = 36.sp
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-            }
-            Button(onClick ={
-            if (userData != null) {
-                ProfileUIClient().readProfilePicture(userData,){
-                    imageUrl = it
-                }
-                Log.d("getImage", imageUrl)
-            }
-        } ) {
-        Text("Refresh")
-        }
-            Button(onClick = onSignOut) {
-                Text("Sign Out")
             }
         }
     }
-@Composable
-fun profilePic(
-    imageUrl:String
-){
-    AsyncImage(
-        model = imageUrl,
-        contentDescription = "Profile picture",
-        modifier = Modifier
-            .size(300.dp),
-//                        .clip(CircleShape),
-        contentScale = ContentScale.Fit
-    )
+    LaunchedEffect(userData) {
+        email = userData?.email ?: ""
+        username = userData?.username ?: ""
+        address = userData?.address ?: ""
+    }
+    LaunchedEffect(forceRefresh) {
+        Toast.makeText(
+            context,
+            "Refresh success",
+            Toast.LENGTH_SHORT
+        ).show()
+        loadProfilePicture()
+    }
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        imageUri = uri
+    }
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+
+
+        if (imageUrl.isNotEmpty()) {
+            AsyncImage(
+                model = imageUrl,
+                contentDescription = "Profile picture",
+                modifier = Modifier
+                    .size(150.dp)
+                    .clip(CircleShape),
+                contentScale = ContentScale.Fit
+            )
+        }else {
+            Image(
+                painter = painterResource(R.drawable.ic_launcher_foreground),
+                contentDescription = "Profile picture",
+                modifier = Modifier
+                    .size(150.dp)
+                    .clip(CircleShape)
+                    .background(Color.Black),
+                contentScale = ContentScale.Fit
+            )
+        }
+        OutlinedTextField(
+            value = username,
+            onValueChange = { username = it },
+            label = { Text("Username") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        OutlinedTextField(
+            value = email,
+            onValueChange = { email = it },
+            label = { Text("Email") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        OutlinedTextField(
+            value = address,
+            onValueChange = { address = it },
+            label = { Text("Address") },
+            modifier = Modifier.fillMaxWidth()
+        )
+        if (imageUri==null){
+            Button(onClick = { launcher.launch("image/*") }) {
+                Text("Change Profile Picture")
+            }
+        }
+        if (imageUri != null) {
+            Button(onClick = {
+                val imageByteArray = imageUri?.uriToByteArray(context)
+                imageByteArray?.let {
+                    if (userData != null) {
+                        ProfileViewModel().uploadProfilePicture(
+                            userData,
+                            imageByteArray,
+                            context
+                        )
+                        forceRefresh++
+                        imageUri=null
+                    }
+                }
+            }) {
+                Text("Upload Image")
+            }
+        }
+        Button(onClick = { forceRefresh++ }) {
+            Text("Refresh")
+        }
+        Button(onClick = {
+            if (userData != null) {
+                ProfileViewModel().updateProfile(userData,username,address,context)
+            }
+        }) {
+            Text("update data")
+        }
+        Button(onClick = onSignOut) {
+            Text("Sign Out")
+        }
+    }
 }
 
+@Composable
+fun EditableField(
+    label: String,
+    value: String?,
+    onValueChange: (String) -> Unit
+) {
+    var textFieldValue by remember { mutableStateOf(value ?: "") }
+    var isEditing by remember { mutableStateOf(value == null) }
 
-//if (userData?.profilePictureUrl!=null){
-//    AsyncImage(
-//        model = userData.profilePictureUrl,
-//        contentDescription = "Profile picture",
-//        modifier = Modifier
-//            .size(150.dp)
-//            .clip(CircleShape),
-//        contentScale = ContentScale.Crop
-//    )
-//
-//    Spacer(modifier = Modifier.height(16.dp))
-//}
-//else if (imageUrl.isNotEmpty()){
-//    AsyncImage(
-//        model = imageUrl,
-//        contentDescription = "Profile picture",
-//        modifier = Modifier
-//            .size(300.dp),
-////                        .clip(CircleShape),
-//        contentScale = ContentScale.Fit
-//    )
-//    Log.d("getImage", imageUrl)
-//}
-
-
-//--get image
-//Button(onClick ={
-//    if (userData != null) {
-//        ProfileUIClient().readProfilePicture(userData,){
-//            imageUrl = it
-//        }
-//
-//        Log.d("getImage", imageUrl)
-//    }
-//} ) {
-//
-//}
+    if (isEditing) {
+        TextField(
+            value = textFieldValue,
+            onValueChange = {
+                textFieldValue = it
+                onValueChange(it)
+            },
+            label = { Text(label) },
+            modifier = Modifier.fillMaxWidth()
+        )
+    } else {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { isEditing = true } // Switch to editing mode
+        ) {
+            Text(text = textFieldValue.ifEmpty { "Click to add $label" })
+        }
+    }
+}

@@ -1,5 +1,7 @@
 package com.example.raionthings.presentation.login
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 import java.time.LocalDate
 
 data class SignInResult(
@@ -7,13 +9,15 @@ data class SignInResult(
     val errorMessage: String?
 )
 
+@Parcelize
 data class UserData(
-    val userId: String,
-    val email: String?,
-    val username: String?,
-    val profilePictureUrl: String?,
-    val address: String?,
-)
+    val userId: String = "",
+    val email: String? = null,
+    val username: String? = null,
+    val profilePictureUrl: String?=null,
+    var address: String? = null,
+): Parcelable
+
 data class UserProduk(
 //    val productId: String, // ID unik produk auto generate
     val sellerId: String,  // ID user penjual
