@@ -8,6 +8,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.raionthings.data.remote.dto.supabase
 import com.example.raionthings.presentation.login.UserData
 import com.example.raionthings.presentation.login.UserProduk
+import com.google.firebase.auth.EmailAuthProvider
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -97,19 +99,55 @@ class ProfileViewModel:ViewModel() {
         Log.d("getUser", user.toString())
     }
 
-    fun updateProfile (userData: UserData, username:String, address: String, context: Context){
+    fun updateProfile (userData: UserData, email:String ,username:String, address: String, context: Context){
+        val user = Firebase.auth.currentUser
         val profileRef = profileUser.document(userData.userId)
-        profileRef.update(mapOf(
-            "username" to username,
-            "address" to address
-        ))
-            .addOnSuccessListener {
-                Toast.makeText(
-                context,
-                    "Data Updated!",
-                    Toast.LENGTH_SHORT
-                ).show()
+        try {
+            if (userData.email==email){
+                profileRef.update(mapOf(
+                    "username" to username,
+                    "email" to email,
+                    "address" to address
+                ))
+                    .addOnSuccessListener {
+                        Toast.makeText(
+                            context,
+                            "Data Updated!",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+            }else{
+                user?.let {
+                    val credential = EmailAuthProvider.getCredential(it.email!!, "rahasia") // 🔴 You must get the user's password!
+
+                    it.reauthenticate(credential).addOnSuccessListener {
+                        // ✅ Now update the email in Firebase Authentication
+                        user.updateEmail(email).addOnSuccessListener {
+                            Toast.makeText(context, "Email Updated in Firebase Auth!", Toast.LENGTH_SHORT).show()
+                            profileRef.update(mapOf(
+                                "username" to username,
+                                "email" to email,
+                                "address" to address
+                            ))
+                                .addOnSuccessListener {
+                                    Toast.makeText(
+                                        context,
+                                        "Data Updated!",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                        }.addOnFailureListener { e ->
+                            Toast.makeText(context, "Email and data Update Failed: ${e.message}", Toast.LENGTH_SHORT).show()
+                        }
+
+                    }.addOnFailureListener { e ->
+                        Toast.makeText(context, "Re-authentication Failed: ${e.message}", Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
+        }catch (e:Exception){
+
+        }
     }
     fun addDagangan(userData: UserData, userProduk: UserProduk){
 //        val dagang = userProduk.run {

@@ -193,7 +193,9 @@ fun SignInScreen(
     state: SignInState,
     Email: EmailAuthUIClient,
     onSignInClick: () -> Unit,
-    onNavigateToRegister: () -> Unit
+    onNavigateToRegister: () -> Unit,
+    onNavigateToReset: () -> Unit
+
 ) {
     val emailFocusRequester = remember { FocusRequester() }
     val passwordFocusRequester = remember { FocusRequester() }
@@ -303,6 +305,9 @@ fun SignInScreen(
                     }
                 )
             )
+            TextButton(onClick = onNavigateToReset){
+                Text("Forgot ur password?")
+            }
             Spacer(modifier = Modifier.height(60.dp))
             Button(onClick = {
                 if (email.isNotEmpty() && password.isNotEmpty()) {

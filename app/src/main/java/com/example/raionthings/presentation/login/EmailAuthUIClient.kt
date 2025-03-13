@@ -1,5 +1,7 @@
 package com.example.raionthings.presentation.login
 
+import android.content.Context
+import android.widget.Toast
 import com.example.raionthings.presentation.profile.ProfileViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -57,6 +59,16 @@ class EmailAuthUIClient {
         } catch (e: Exception) {
             SignInResult(data = null, errorMessage = e.message)
         }
+    }
+    fun resetPassword(emailAddress:String,context: Context){
+        auth.sendPasswordResetEmail(emailAddress)
+            .addOnSuccessListener {
+                Toast.makeText(
+                    context,
+                    "Email sent!",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
     }
 
 //    fun getCurrentUser(): UserData? {

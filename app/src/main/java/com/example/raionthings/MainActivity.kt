@@ -27,6 +27,7 @@ import com.example.raionthings.presentation.login.EmailAuthUIClient
 import com.example.raionthings.presentation.login.GoogleAuthUICLient
 import com.example.raionthings.presentation.login.ProfileScreen
 import com.example.raionthings.presentation.login.RegisterPage
+import com.example.raionthings.presentation.login.ResetPasswordScreen
 import com.example.raionthings.presentation.login.SignInScreen
 import com.example.raionthings.presentation.login.SignInViewModel
 import com.example.raionthings.presentation.login.UserData
@@ -102,6 +103,7 @@ class MainActivity : ComponentActivity() {
                                 }
                             },
                             onNavigateToRegister = { navController.navigate("register") },
+                            onNavigateToReset = { navController.navigate("resetpassword") }
                         )
                     }
                     composable("profile") {
@@ -175,6 +177,11 @@ class MainActivity : ComponentActivity() {
                             state = signInState,
                             Email = email,
                             viewModel = signInViewModel,
+                            onNavigateToLogin = {navController.navigate("sign_in")}
+                        )
+                    }
+                    composable("resetpassword"){
+                        ResetPasswordScreen(
                             onNavigateToLogin = {navController.navigate("sign_in")}
                         )
                     }

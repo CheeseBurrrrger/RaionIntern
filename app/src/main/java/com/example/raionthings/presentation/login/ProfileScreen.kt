@@ -158,7 +158,7 @@ fun ProfileScreen(
         }
         Button(onClick = {
             if (userData != null) {
-                ProfileViewModel().updateProfile(userData,username,address,context)
+                ProfileViewModel().updateProfile(userData,email,username,address,context)
             }
         }) {
             Text("update data")
