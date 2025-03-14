@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import com.example.raionthings.presentation.login.UserData
+import com.example.raionthings.presentation.navigation.readprofile
 import com.example.raionthings.presentation.navigation.sell
 import com.example.raionthings.presentation.sell.sellViewModel
 
@@ -111,7 +112,7 @@ Column (modifier = Modifier
         Button(onClick = {}) {
             Text("pes")
         }
-        Button(onClick = {}) {
+        Button(onClick = {navController.navigate(readprofile)}) {
             Text("prof")
         }
     }

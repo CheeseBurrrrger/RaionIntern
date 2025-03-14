@@ -29,7 +29,9 @@ import com.example.raionthings.presentation.login.ResetPasswordScreen
 import com.example.raionthings.presentation.login.SignInScreen
 import com.example.raionthings.presentation.login.SignInViewModel
 import com.example.raionthings.presentation.login.UserData
+import com.example.raionthings.presentation.profile.EditProfileScreen
 import com.example.raionthings.presentation.profile.ProfileViewModel
+import com.example.raionthings.presentation.profile.ReadProfileScreen
 import com.example.raionthings.presentation.sell.SellScreen
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -49,6 +51,11 @@ object profile
 object explore
 @Serializable
 object sell
+@Serializable
+object readprofile
+@Serializable
+object editprofile
+
 
 @Composable
 fun AppNavigation(
@@ -235,6 +242,62 @@ fun AppNavigation(
                 }
             }
             SellScreen(userData, navController)
+        }
+        composable<readprofile>{
+            val googleUser = googleAuthUiClient.getSignedInUser()?.userId
+            val emailUser = email.getCurrentUser()?.userId
+            var currentUserId by remember { mutableStateOf(googleUser ?: emailUser) }
+            var userData by remember { mutableStateOf<UserData?>(null) }
+            LaunchedEffect(Unit) {
+                val id = googleAuthUiClient.getSignedInUser()?.userId ?: email.getCurrentUser()?.userId
+                currentUserId = id
+
+                currentUserId?.let {
+                    try {
+                        val document = Firebase.firestore.collection("Profile").document(it).get().await()
+                        if (document.exists()) {
+                            userData = document.toObject(UserData::class.java)
+                        } else {
+//                            userData = email.getCurrentUser()
+//                            userData?.let { ProfileViewModel().addNewProfile(it) }
+                        }
+                    } catch (e: Exception) {
+                        Log.e("FirestoreError", "Error fetching user", e)
+                    }
+                }
+            }
+            ReadProfileScreen(
+                userData,
+                navController
+            )
+        }
+        composable<editprofile>{
+            val googleUser = googleAuthUiClient.getSignedInUser()?.userId
+            val emailUser = email.getCurrentUser()?.userId
+            var currentUserId by remember { mutableStateOf(googleUser ?: emailUser) }
+            var userData by remember { mutableStateOf<UserData?>(null) }
+            LaunchedEffect(Unit) {
+                val id = googleAuthUiClient.getSignedInUser()?.userId ?: email.getCurrentUser()?.userId
+                currentUserId = id
+
+                currentUserId?.let {
+                    try {
+                        val document = Firebase.firestore.collection("Profile").document(it).get().await()
+                        if (document.exists()) {
+                            userData = document.toObject(UserData::class.java)
+                        } else {
+//                            userData = email.getCurrentUser()
+//                            userData?.let { ProfileViewModel().addNewProfile(it) }
+                        }
+                    } catch (e: Exception) {
+                        Log.e("FirestoreError", "Error fetching user", e)
+                    }
+                }
+            }
+            EditProfileScreen(
+                userData,
+                navController
+            )
         }
     }
 }
