@@ -33,8 +33,11 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.example.raionthings.R
+import com.example.raionthings.presentation.navigation.explore
+import com.example.raionthings.presentation.navigation.profile
 import com.example.raionthings.presentation.profile.ProfileViewModel
 import com.example.raionthings.utils.uriToByteArray
 
@@ -42,7 +45,8 @@ import com.example.raionthings.utils.uriToByteArray
 @Composable
 fun ProfileScreen(
     userData: UserData?,
-    onSignOut: () -> Unit
+    onSignOut: () -> Unit,
+    navController: NavController
 ) {
     var imageUri by remember { mutableStateOf<Uri?>(null) }
     var imageUrl by remember { mutableStateOf("") }
@@ -77,6 +81,15 @@ fun ProfileScreen(
             Toast.LENGTH_SHORT
         ).show()
         loadProfilePicture()
+        if (userData != null) {
+            if (userData.username?.isNotEmpty() == true &&
+                userData.address?.isNotEmpty() == true &&
+                userData.profilePictureUrl?.isNotEmpty() == true){
+                navController.navigate(explore) {
+                popUpTo(profile) { inclusive = true }
+                }
+            }
+        }
     }
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()

@@ -18,18 +18,18 @@ data class UserData(
     var address: String? = null,
 ): Parcelable
 
-data class UserProduk(
-//    val productId: String, // ID unik produk auto generate
-    val sellerId: String,  // ID user penjual
-    val namaProduk: String,
-    val hargaProduk: Int,
-    val stokProduk: Int,
-    val onGoing: Int,
-    val dateCreated: LocalDate,
-    val dateExpired: LocalDate,
-    val productPictureUrl: String,
-    val isSold:Boolean
-)
+//data class UserProduk(
+////    val productId: String, // ID unik produk auto generate
+//    val sellerId: String,  // ID user penjual
+//    val namaProduk: String,
+//    val hargaProduk: Int,
+//    val stokProduk: Int,
+//    val onGoing: Int,
+//    val dateCreated: LocalDate,
+//    val dateExpired: LocalDate,
+//    val productPictureUrl: String,
+//    val isSold:Boolean
+//)
 data class UserKeranjang(
 //    val cartItemId: String, // ID unik item di keranjang auto generate(makanya di comment)
     val productId: String,  // Referensi ke produk di subcollection dagangan

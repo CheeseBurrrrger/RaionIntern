@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.raionthings.data.remote.dto.supabase
 import com.example.raionthings.presentation.login.UserData
-import com.example.raionthings.presentation.login.UserProduk
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.SetOptions
@@ -149,13 +148,13 @@ class ProfileViewModel:ViewModel() {
 
         }
     }
-    fun addDagangan(userData: UserData, userProduk: UserProduk){
+//    fun addDagangan(userData: UserData, userProduk: UserProduk){
 //        val dagang = userProduk.run {
 ////            UserProduk(
 //
 //            )
 //        }
-    }
+//    }
 
 
 }

@@ -1,5 +1,6 @@
 package com.example.raionthings.presentation.login
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Button
@@ -27,7 +28,16 @@ fun ResetPasswordScreen(
             modifier = Modifier.fillMaxWidth()
         )
         Button(onClick = {
-            EmailAuthUIClient().resetPassword(email,context)
+            if(email.isNotEmpty()){
+                EmailAuthUIClient().resetPassword(email,context)
+            }
+            else{
+                Toast.makeText(
+                    context,
+                    "why u let the email field blank huh?",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
             onNavigateToLogin()
         }) {
             Text("Reset password")
