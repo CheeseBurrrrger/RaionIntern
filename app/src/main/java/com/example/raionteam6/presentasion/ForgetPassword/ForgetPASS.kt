@@ -130,7 +130,7 @@ fun ForgetPASS(navController: NavController) {
                     .fillMaxWidth()
                     .size(width = 371.53.dp, height = 57.74.dp),
                     colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF632713)
+                    containerColor = Color(0xFFC63433)
                 ),
                 shape = RoundedCornerShape(24.dp)
             ) {

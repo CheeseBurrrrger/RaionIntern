@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -276,7 +277,7 @@ fun RegisterScreen(navController: NavController) {
                         },
                         fontFamily = SFProdisplayFontFamily,
                         fontSize = 13.sp,
-                        color = Color(255, 165, 0),
+                        color = Color(0xFFC63433),
                         modifier = Modifier
                             .clickable {  }
                             .padding(5.dp),
@@ -284,11 +285,13 @@ fun RegisterScreen(navController: NavController) {
                     )
                 }
 
+
+
                 Button(
                     onClick = {},
                     modifier = Modifier
                         .size(width = 372.dp, height = 56.dp),
-                    colors = ButtonDefaults.buttonColors(Color(0xFF632713)),
+                    colors = ButtonDefaults.buttonColors(Color(0xFFC63433)),
                     shape = RoundedCornerShape(24.dp),
                     enabled = ValidCheck && CheckTerm_Policy && password == RePassword
                 ) {
@@ -297,6 +300,24 @@ fun RegisterScreen(navController: NavController) {
                         fontFamily = SFProdisplayFontFamily,
                         fontWeight = FontWeight.Bold,
                         fontSize = 20.sp
+                    )
+                }
+                Spacer(modifier = Modifier.padding(8.dp))
+                Row (
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ){
+                    Text(
+                        text = "Sudah mempunyai akun?",
+                        fontFamily = SFProdisplayFontFamily,
+                        fontWeight = FontWeight.Normal
+                    )
+                    Text(
+                        text = " Login",
+                        fontFamily = SFProdisplayFontFamily,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFFC63433),
+                        modifier = Modifier.clickable {navController.navigate("Login_Screen")}
                     )
                 }
             }
@@ -317,7 +338,7 @@ fun RegisterScreen(navController: NavController) {
                 Text(
                     text = "Atau dengan",
                     fontFamily = SFProdisplayFontFamily,
-                    fontSize = 10.sp
+                    fontSize = 14.sp
                 )
 
                 Image(
@@ -326,57 +347,37 @@ fun RegisterScreen(navController: NavController) {
                     modifier = Modifier.padding(8.dp)
                 )
             }
-            Spacer(modifier = Modifier.padding(5.dp))
-            Row (
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 12.dp),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.facebook),
-                    contentDescription = "facebook_logo",
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .size(50.dp)
-                        .clip(RoundedCornerShape(50.dp))
-                        .clickable {  },
-                )
-                Spacer(modifier = Modifier.padding(16.dp))
-                Image(
-                    painter = painterResource(id = R.drawable.google),
-                    contentDescription = "google_logo",
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .size(50.dp)
-                        .clip(RoundedCornerShape(50.dp))
-                        .clickable {  },
-                )
-            }
-            Spacer(modifier = Modifier.padding(25.dp))
+            Spacer(modifier = Modifier.padding(10.dp))
             Column (
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(),
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ){
-                Row (
-                    modifier = Modifier.fillMaxWidth().fillMaxHeight(),
-                    horizontalArrangement = Arrangement.Center
-                ){
-                    Text(
-                        text = "Sudah mempunyai akun?",
-                        fontFamily = SFProdisplayFontFamily,
-                        fontWeight = FontWeight.Normal
-                    )
-                    Text(
-                        text = " Login",
-                        fontFamily = SFProdisplayFontFamily,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(255, 165, 0),
-
-                        modifier = Modifier.clickable {navController.navigate("Login_Screen")}
-                    )
+                Button(
+                    onClick = {},
+                    modifier = Modifier
+                        .size(width = 372.dp, height = 56.dp),
+                    colors = ButtonDefaults.buttonColors(Color(0xFFE3E3E3)),
+                    shape = RoundedCornerShape(24.dp)
+                ) {
+                    Row (
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ){
+                        Image(
+                            painter = painterResource(id = R.drawable.logo_google_nobg),
+                            contentDescription = "Logo Google",
+                            modifier = Modifier.size(40.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "Sign Up with Google",
+                            fontFamily = SFProdisplayFontFamily,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 16.sp,
+                            color = Color.Black
+                        )
+                    }
                 }
             }
         }

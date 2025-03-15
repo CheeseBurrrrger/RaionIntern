@@ -69,7 +69,7 @@ fun SuccesNewPassword(navController: NavController) {
                 .padding(horizontal = 12.dp, vertical = 10.dp)
                 .size(width = 372.19.dp, height = 57.74.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFF632713)
+                containerColor = Color(0xFFC63433)
             ),
             shape = RoundedCornerShape(24.dp)
         ) {

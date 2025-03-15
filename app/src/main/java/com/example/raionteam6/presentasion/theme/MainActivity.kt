@@ -15,6 +15,9 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.raionteam6.presentasion.BerandaScreen.Beranda.BerandaScreen
+import com.example.raionteam6.presentasion.BerandaScreen.Kategori.KategoriScreen
+import com.example.raionteam6.presentasion.BerandaScreen.MostBuyScreen.MostBuyScreen
 import com.example.raionteam6.presentasion.ForgetPassword.ForgetPASS
 import com.example.raionteam6.presentasion.ForgetPassword.ForgetPASS
 import com.example.raionteam6.presentasion.LoginScreen.LoginScreen
@@ -47,6 +50,15 @@ class MainActivity : ComponentActivity() {
                 }
                 composable("Success_NewPassword") {
                     SuccesNewPassword(navController)
+                }
+                composable("Beranda_Screen") {
+                    BerandaScreen(navController)
+                }
+                composable("Kategori_Screen") {
+                    KategoriScreen(navController)
+                }
+                composable("MostBuy_Screen") {
+                    MostBuyScreen(navController)
                 }
             })
         }

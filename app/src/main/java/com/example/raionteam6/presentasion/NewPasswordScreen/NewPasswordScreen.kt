@@ -60,6 +60,7 @@ fun NewPasswordScreen(navController: NavController) {
     else
         painterResource(id = R.drawable.hide)
 
+    val checkPassword = password.isNotBlank() && newPassword.isNotBlank()
         Column(
             modifier = Modifier.fillMaxWidth().fillMaxHeight()
                 .background(color = Color.White)
@@ -204,10 +205,10 @@ fun NewPasswordScreen(navController: NavController) {
                     .padding(horizontal = 12.dp, vertical = 10.dp)
                     .size(width = 372.19.dp, height = 57.74.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF632713)
+                    containerColor = Color(0xFFC63433)
                 ),
                 shape = RoundedCornerShape(24.dp),
-                enabled = password == newPassword
+                enabled = password == newPassword && checkPassword
             ) {
                 Text(
                     text = "Lanjut",
