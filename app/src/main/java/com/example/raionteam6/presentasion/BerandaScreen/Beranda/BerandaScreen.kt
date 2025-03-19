@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -24,11 +25,13 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
@@ -89,151 +92,178 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.ui.graphics.Color.Companion.Gray
 import androidx.compose.ui.zIndex
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.raionteam6.Datalocal.BottomNavItems
+import com.example.raionteam6.presentasion.BottomNavbar.BottomNavBar
 
 @Composable
 fun BerandaScreen(navController: NavController, modifier: Modifier = Modifier) {
-
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        Column(
-            modifier = Modifier
-        ) {
-            Box(
-                modifier = Modifier.fillMaxWidth(),
-                contentAlignment = Alignment.Center
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.banner_makan),
-                    contentDescription = "Bannermakan",
-                    modifier = Modifier
-                        .size(width = 412.dp, height = 169.dp)
-                )
-            }
-            Spacer(modifier = Modifier.height(40.dp))
-            Row(
+    Scaffold(
+        topBar = {
+            Image(
+                painter = painterResource(id = R.drawable.banner_makan),
+                contentDescription = "Bannermakan",
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Kategori Makanan",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp,
-                    fontFamily = SFProdisplayFontFamily
-                )
-
-                Text(
-                    text = "Lihat Semua",
-                    color = Color.Gray,
-                    fontSize = 14.sp,
-                    fontFamily = poppinsFontFamily,
-                    fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier.clickable { navController.navigate("Kategori_Screen") }
-                )
-            }
-
-            // Categories row
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 16.dp)
-                    .padding(horizontal = 8.dp),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                FoodCategoryItem("Ayam", R.drawable.ayam_icon)
-                FoodCategoryItem("Roti", R.drawable.roti_icon)
-                FoodCategoryItem("Sayur", R.drawable.sayur_icon)
-                FoodCategoryItem("Ricebox", R.drawable.ricebox_icon)
-            }
-
-            Spacer(Modifier.height(12.dp))
-
-            Text(
-                text = "Paling Banyak Dibeli",
-                fontWeight = FontWeight.Bold,
-                fontSize = 20.sp,
-                fontFamily = SFProdisplayFontFamily,
-                modifier = Modifier.padding(horizontal = 16.dp)
+                    .size(width = 412.dp, height = 169.dp)
             )
-
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(12.dp))
-                    .padding(16.dp)
-                    .shadow(
-                        elevation = 8.dp,
-                        shape = RoundedCornerShape(12.dp)
-                    ),
-                colors = CardDefaults.cardColors(Color.White)
-            ) {
-                Box(
-                    modifier = Modifier.padding(16.dp)
+            FloatingSearchBar()
+        },
+        bottomBar = { BottomNavBar()},
+        floatingActionButton = {
+            Box(
+                modifier = Modifier.fillMaxWidth()
+            ){
+                FloatingActionButton(
+                    onClick = {navController.navigate("UploadItem_Screen")},
+                    containerColor = Color(0xFFB3B3B3),
+                    shape = CircleShape,
+                    modifier = Modifier
+                        .zIndex(1f)
+                        .offset(y = 45.dp, x = 15.dp)
+                        .align(Alignment.Center)
                 ) {
-                    Text(
-                        text = "Mencari makanan favorit ?",
-                        color = Color.Black,
-                        fontWeight = FontWeight.Bold,
-                        fontFamily = SFProdisplayFontFamily,
-                        fontSize = 16.sp
-                    )
-                    Text(
-                        text = "Lihat daftar makanan \n" +
-                                "yang paling banyak dibeli! ?",
-                        color = Color.Black,
-                        fontWeight = FontWeight.Normal,
-                        fontFamily = SFProdisplayFontFamily,
-                        fontSize = 13.sp,
-                        modifier = Modifier.offset(y = 30.dp)
-                    )
-
-                    Button(
-                        onClick = { navController.navigate("MostBuy_Screen") },
-                        colors = ButtonDefaults.buttonColors(Color(0xFFD32F2F)),
-                        shape = RoundedCornerShape(24.dp),
-                        modifier = Modifier
-                            .width(137.dp)
-                            .height(45.dp)
-                            .offset(y = 80.dp)
-                    ) {
-                        Text(
-                            text = "Cari",
-                            color = Color.White,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 16.sp,
-                            fontFamily = SFProdisplayFontFamily
-                        )
-                    }
-
-                    Image(
-                        painter = painterResource(id = R.drawable.cewe_ramen),
-                        contentDescription = "Illustration",
-                        modifier = Modifier.size(width = 200.dp, height = 130.dp)
-                            .align(Alignment.Center)
-                            .offset(x = 185.dp, y = 0.dp)
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = "Add",
+                        tint = Color.White
                     )
                 }
             }
-            Spacer(Modifier.height(8.dp))
-            Text(
-                text = "Restoran Terbaik",
-                fontWeight = FontWeight.Bold,
-                fontSize = 20.sp,
-                fontFamily = SFProdisplayFontFamily,
-                modifier = Modifier.padding(horizontal = 16.dp)
-            )
-            Itemlist(DataSource().loadToko())
-        }
+        },
+        modifier = Modifier.fillMaxSize().fillMaxWidth()
+    ) { paddingValues ->
+        Box(
+            modifier = Modifier.fillMaxSize()
+                .padding(paddingValues)
+        ) {
+            Column(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                Spacer(modifier = Modifier.height(40.dp))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Kategori Makanan",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp,
+                        fontFamily = SFProdisplayFontFamily
+                    )
 
-        FloatingSearchBar()
+                    Text(
+                        text = "Lihat Semua",
+                        color = Color.Gray,
+                        fontSize = 14.sp,
+                        fontFamily = poppinsFontFamily,
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier.clickable { navController.navigate("Kategori_Screen") }
+                    )
+                }
+
+                // Categories row
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 16.dp)
+                        .padding(horizontal = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    FoodCategoryItem("Ayam", R.drawable.ayam_icon)
+                    FoodCategoryItem("Roti", R.drawable.roti_icon)
+                    FoodCategoryItem("Sayur", R.drawable.sayur_icon)
+                    FoodCategoryItem("Ricebox", R.drawable.ricebox_icon)
+                }
+
+                Spacer(Modifier.height(12.dp))
+
+                Text(
+                    text = "Paling Banyak Dibeli",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp,
+                    fontFamily = SFProdisplayFontFamily,
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(12.dp))
+                        .padding(16.dp)
+                        .shadow(
+                            elevation = 8.dp,
+                            shape = RoundedCornerShape(12.dp)
+                        ),
+                    colors = CardDefaults.cardColors(Color.White)
+                ) {
+                    Box(
+                        modifier = Modifier.padding(16.dp)
+                    ) {
+                        Text(
+                            text = "Mencari makanan favorit ?",
+                            color = Color.Black,
+                            fontWeight = FontWeight.Bold,
+                            fontFamily = SFProdisplayFontFamily,
+                            fontSize = 16.sp
+                        )
+                        Text(
+                            text = "Lihat daftar makanan \n" +
+                                    "yang paling banyak dibeli! ?",
+                            color = Color.Black,
+                            fontWeight = FontWeight.Normal,
+                            fontFamily = SFProdisplayFontFamily,
+                            fontSize = 13.sp,
+                            modifier = Modifier.offset(y = 30.dp)
+                        )
+
+                        Button(
+                            onClick = { navController.navigate("MostBuy_Screen") },
+                            colors = ButtonDefaults.buttonColors(Color(0xFFD32F2F)),
+                            shape = RoundedCornerShape(24.dp),
+                            modifier = Modifier
+                                .width(137.dp)
+                                .height(45.dp)
+                                .offset(y = 80.dp)
+                        ) {
+                            Text(
+                                text = "Cari",
+                                color = Color.White,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 16.sp,
+                                fontFamily = SFProdisplayFontFamily
+                            )
+                        }
+
+                        Image(
+                            painter = painterResource(id = R.drawable.cewe_ramen),
+                            contentDescription = "Illustration",
+                            modifier = Modifier.size(width = 200.dp, height = 130.dp)
+                                .align(Alignment.Center)
+                                .offset(x = 185.dp, y = 0.dp)
+                        )
+                    }
+                }
+                Spacer(Modifier.height(8.dp))
+                Text(
+                    text = "Restoran Terbaik",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp,
+                    fontFamily = SFProdisplayFontFamily,
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+                Itemlist(DataSource().loadToko())
+            }
+
+
+        }
     }
+
 }
 
 
@@ -401,9 +431,12 @@ fun FloatingSearchBar() {
         SearchBar()
     }
 }
+
+
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun PreviewScreen(){
+    BerandaScreen(navController = rememberNavController())
 }
 
 

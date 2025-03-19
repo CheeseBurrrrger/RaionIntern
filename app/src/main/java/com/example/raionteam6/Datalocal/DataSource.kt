@@ -15,9 +15,4 @@ class DataSource() {
         )
     }
 
-    public fun loadNavItems(): List<BottomNavItems> {
-        return listOf<BottomNavItems>(
-            BottomNavItems("Beranda", Icons.Outlined.Home, "Beranda_Screen"),
-        )
-    }
 }

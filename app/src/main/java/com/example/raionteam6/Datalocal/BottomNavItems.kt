@@ -1,9 +1,9 @@
 package com.example.raionteam6.Datalocal
 
+import androidx.annotation.DrawableRes
 import androidx.compose.ui.graphics.vector.ImageVector
 
 data class BottomNavItems (
     val label: String,
-    val icon: ImageVector,
-    val route: String
+    @DrawableRes val icon: Int,
 )
