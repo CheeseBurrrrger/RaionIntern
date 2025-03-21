@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -35,7 +34,7 @@ import com.example.raionthings.presentation.login.UserData
 import com.example.raionthings.presentation.navigation.editprofile
 import com.example.raionthings.presentation.navigation.explore
 import com.example.raionthings.presentation.navigation.readprofile
-import com.example.raionthings.presentation.navigation.sell
+import com.example.raionthings.presentation.navigation.sellfirst
 
 @Composable
 fun ReadProfileScreen(
@@ -106,17 +105,13 @@ fun ReadProfileScreen(
 
         )
 
-        OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
-            label = { Text("Email") },
+        Text(
+            email,
             modifier = Modifier.fillMaxWidth()
         )
 
-        OutlinedTextField(
-            value = address,
-            onValueChange = { address = it },
-            label = { Text("Address") },
+        Text(
+            address,
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -140,7 +135,7 @@ fun ReadProfileScreen(
             Button(onClick = {}) {
                 Text("Akt")
             }
-            Button(onClick = {navController.navigate(sell)}) {
+            Button(onClick = {navController.navigate(sellfirst)}) {
                 Text("add")
             }
             Button(onClick = {}) {

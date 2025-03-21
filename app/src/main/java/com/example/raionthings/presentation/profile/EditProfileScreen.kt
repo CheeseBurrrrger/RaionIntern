@@ -123,10 +123,8 @@ fun EditProfileScreen(
             modifier = Modifier.fillMaxWidth()
         )
 
-        OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
-            label = { Text("Email") },
+        Text(
+            email,
             modifier = Modifier.fillMaxWidth()
         )
 

@@ -2,11 +2,16 @@ package com.example.raionthings.presentation.navigation
 
 
 import android.app.Activity
+import android.os.Build
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -14,27 +19,40 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.raionthings.presentation.explore.ExploreScreen
+import androidx.navigation.navArgument
+import com.example.raionthings.presentation.buy.BuyScreen
+import com.example.raionthings.presentation.explore.beranda.BerandaScreen
 import com.example.raionthings.presentation.login.EmailAuthUIClient
 import com.example.raionthings.presentation.login.GoogleAuthUICLient
-import com.example.raionthings.presentation.login.ProfileScreen
-import com.example.raionthings.presentation.login.RegisterPage
+import com.example.raionthings.presentation.login.LoginScreen
+import com.example.raionthings.presentation.login.NewPasswordScreen
+import com.example.raionthings.presentation.login.RegisterScreen
 import com.example.raionthings.presentation.login.ResetPasswordScreen
-import com.example.raionthings.presentation.login.SignInScreen
 import com.example.raionthings.presentation.login.SignInViewModel
 import com.example.raionthings.presentation.login.UserData
-import com.example.raionthings.presentation.profile.EditProfileScreen
+import com.example.raionthings.presentation.profile.ChangePass
+import com.example.raionthings.presentation.profile.EditProfileScreenv1
 import com.example.raionthings.presentation.profile.ProfileViewModel
-import com.example.raionthings.presentation.profile.ReadProfileScreen
+import com.example.raionthings.presentation.profile.SuccesChangePassScreen
+import com.example.raionthings.presentation.profile.SuccesChangePasssign
+import com.example.raionthings.presentation.profile.SuccesChangeProfileScreen
+import com.example.raionthings.presentation.profile.UpdateProfileScreen
 import com.example.raionthings.presentation.sell.SellScreen
+import com.example.raionthings.presentation.sell.SuccessUploadItem
+import com.example.raionthings.presentation.sell.UploadFirstItemScreen
+import com.example.raionthings.presentation.sell.sellViewModel
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.gson.Gson
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.serialization.Serializable
@@ -46,17 +64,47 @@ object register
 @Serializable
 object resetpassword
 @Serializable
+object newpassscreen
+@Serializable
 object profile
 @Serializable
-object explore
+object explore{
+    const val route = "explore"
+}
 @Serializable
-object sell
+object successchangepasssign
 @Serializable
-object readprofile
+object sellfirst
+@Serializable
+object readprofile{
+    const val route = "readprofile"
+
+}
 @Serializable
 object editprofile
+@Serializable
+object aktivitas{
+    const val route = "aktivitas"
+}
+@Serializable
+object pesanan{
+    const val route = "pesanan"
+}
+@Serializable
+object changepass
+@Serializable
+object successchangeprofile
+@Serializable
+object uploadproduk
+@Serializable
+object successsell
+@Serializable
+object successchangepass
+// change password beda dengan reset password!
+//yang dipake read profile, profile tidak dipake
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AppNavigation(
     googleAuthUiClient: GoogleAuthUICLient,
@@ -87,7 +135,29 @@ fun AppNavigation(
                     }
                 }
             )
+            val googleUser = googleAuthUiClient.getSignedInUser()?.userId
+            val emailUser = email.getCurrentUser()?.userId
+            var currentUserId by remember { mutableStateOf(googleUser ?: emailUser) }
+            var userData by remember { mutableStateOf<UserData?>(null) }
 
+            LaunchedEffect(Unit) {
+                val id = googleAuthUiClient.getSignedInUser()?.userId ?: email.getCurrentUser()?.userId
+                currentUserId = id
+
+                currentUserId?.let {
+                    try {
+                        val document = Firebase.firestore.collection("Profile").document(it).get().await()
+                        if (document.exists()) {
+                            userData = document.toObject(UserData::class.java)
+                        } else {
+                            userData = email.getCurrentUser()
+                            userData?.let { ProfileViewModel().addNewProfile(it) }
+                        }
+                    } catch (e: Exception) {
+                        Log.e("FirestoreError", "Error fetching user", e)
+                    }
+                }
+            }
             LaunchedEffect(signInState.isSignInSuccessful) {
                 if (signInState.isSignInSuccessful) {
                     Toast.makeText(context, "Sign in successful", Toast.LENGTH_LONG).show()
@@ -95,8 +165,17 @@ fun AppNavigation(
                     signInViewModel.resetState()
                 }
             }
+//            if (userData?.username?.isNotEmpty() == true &&
+//                userData?.address?.isNotEmpty() == true &&
+//                userData?.profilePictureUrl?.isNotEmpty() == true){
+//                LaunchedEffect(Unit) {
+//                    navController.navigate(explore) {
+//                        popUpTo(profile) { inclusive = true }
+//                    }
+//                }
+//            }
 
-            SignInScreen(
+            LoginScreen(
                 viewModel = signInViewModel,
                 state = signInState,
                 Email = email,
@@ -109,8 +188,7 @@ fun AppNavigation(
                         )
                     }
                 },
-                onNavigateToRegister = { navController.navigate(register) },
-                onNavigateToReset = { navController.navigate(resetpassword) }
+                navController
             )
         }
 
@@ -148,20 +226,13 @@ fun AppNavigation(
                     }
                 }
             }
-            ProfileScreen(
-                userData = userData,
-                onSignOut = {
-                    coroutineScope.launch {
-                        googleAuthUiClient.signOut()
-                        email.signout()
-                        signInViewModel.resetState()
-                        Toast.makeText(context, "Signed out", Toast.LENGTH_LONG).show()
-                        navController.popBackStack()
-                    }
-                },
+            EditProfileScreenv1(
+                userData,
                 navController
             )
         }
+
+
 
         composable<register> {
             val signInViewModel = viewModel<SignInViewModel>()
@@ -173,22 +244,51 @@ fun AppNavigation(
                     signInViewModel.resetState()
                 }
             }
-
-            RegisterPage(
+            LaunchedEffect(signInState.isSignInSuccessful) {
+                if (signInState.isSignInSuccessful) {
+                    Toast.makeText(context, "Sign in successful", Toast.LENGTH_LONG).show()
+                    navController.navigate(profile)
+                    signInViewModel.resetState()
+                }
+            }
+            val launcher = rememberLauncherForActivityResult(
+                contract = ActivityResultContracts.StartIntentSenderForResult(),
+                onResult = { result ->
+                    if (result.resultCode == Activity.RESULT_OK) {
+                        coroutineScope.launch {
+                            val signInResult = googleAuthUiClient.signInWithIntent(
+                                intent = result.data ?: return@launch
+                            )
+                            signInViewModel.onSignInResult(signInResult)
+                        }
+                    }
+                }
+            )
+            RegisterScreen(
                 state = signInState,
                 Email = email,
                 viewModel = signInViewModel,
-                onNavigateToLogin = { navController.navigate(sign_in) }
+                navController,
+                onSignInClick = {
+                    coroutineScope.launch {
+                        signInViewModel.onGoogleSignInSuccess()
+                        val signInIntentSender = googleAuthUiClient.signIn()
+                        launcher.launch(
+                            IntentSenderRequest.Builder(signInIntentSender ?: return@launch).build()
+                        )
+                    }
+                }
+
             )
         }
 
         composable<resetpassword> {
             ResetPasswordScreen(
-                onNavigateToLogin = { navController.navigate(sign_in) }
+                navController
             )
         }
         composable<explore> {
-            val signInViewModel = viewModel<SignInViewModel>()
+            val sellViewModel = viewModel<sellViewModel>()
             val currentUserId = remember { googleAuthUiClient.getSignedInUser()?.userId ?: email.getCurrentUser()?.userId }
             var userData by remember { mutableStateOf<UserData?>(null) }
             LaunchedEffect(currentUserId){
@@ -207,18 +307,20 @@ fun AppNavigation(
                 }
             }
 //            userData?.let { it1 -> ExploreScreen(it1) }
-            userData?.let { it1 -> ExploreScreen(navController, it1,
-                onSignOut = {
-                coroutineScope.launch {
-                    googleAuthUiClient.signOut()
-                    email.signout()
-                    signInViewModel.resetState()
-                    Toast.makeText(context, "Signed out", Toast.LENGTH_LONG).show()
-                    navController.popBackStack()
-                }
-            }) }
+//            userData?.let { it1 -> ExploreScreen(navController, it1,
+//                onSignOut = {
+//                coroutineScope.launch {
+//                    googleAuthUiClient.signOut()
+//                    email.signout()
+//                    signInViewModel.resetState()
+//                    Toast.makeText(context, "Signed out", Toast.LENGTH_LONG).show()
+//                    navController.navigate(sign_in)
+//                }
+//            }) }
+            userData?.let { it1 -> BerandaScreen(navController, it1,sellViewModel) }
         }
-        composable<sell>{
+        composable<sellfirst>{
+            Log.d("sellfirst","cek info sellfirst")
             val googleUser = googleAuthUiClient.getSignedInUser()?.userId
             val emailUser = email.getCurrentUser()?.userId
             var currentUserId by remember { mutableStateOf(googleUser ?: emailUser) }
@@ -241,13 +343,45 @@ fun AppNavigation(
                     }
                 }
             }
-            SellScreen(userData, navController)
+            //ini halaman awal
+            UploadFirstItemScreen(navController)
+//            SellScreen(userData, navController)
+        }
+        composable<uploadproduk> {
+            val googleUser = googleAuthUiClient.getSignedInUser()?.userId
+            val emailUser = email.getCurrentUser()?.userId
+            var currentUserId by remember { mutableStateOf(googleUser ?: emailUser) }
+            var userData by remember { mutableStateOf<UserData?>(null) }
+            LaunchedEffect(Unit) {
+                val id = googleAuthUiClient.getSignedInUser()?.userId ?: email.getCurrentUser()?.userId
+                currentUserId = id
+
+                currentUserId?.let {
+                    try {
+                        val document = Firebase.firestore.collection("Profile").document(it).get().await()
+                        if (document.exists()) {
+                            userData = document.toObject(UserData::class.java)
+                        } else {
+//                            userData = email.getCurrentUser()
+//                            userData?.let { ProfileViewModel().addNewProfile(it) }
+                        }
+                    } catch (e: Exception) {
+                        Log.e("FirestoreError", "Error fetching user", e)
+                    }
+                }
+            }
+            SellScreen(userData,navController)
+        }
+        composable<successsell> {
+            SuccessUploadItem(navController)
         }
         composable<readprofile>{
             val googleUser = googleAuthUiClient.getSignedInUser()?.userId
             val emailUser = email.getCurrentUser()?.userId
             var currentUserId by remember { mutableStateOf(googleUser ?: emailUser) }
             var userData by remember { mutableStateOf<UserData?>(null) }
+            val signInViewModel = viewModel<SignInViewModel>()
+
             LaunchedEffect(Unit) {
                 val id = googleAuthUiClient.getSignedInUser()?.userId ?: email.getCurrentUser()?.userId
                 currentUserId = id
@@ -266,10 +400,22 @@ fun AppNavigation(
                     }
                 }
             }
-            ReadProfileScreen(
-                userData,
-                navController
-            )
+
+            userData?.let { it1 ->
+                UpdateProfileScreen(
+                    userData = it1,
+                    onSignOut = {
+                        coroutineScope.launch {
+                            googleAuthUiClient.signOut()
+                            email.signout()
+                            signInViewModel.resetState()
+                            Toast.makeText(context, "Signed out", Toast.LENGTH_LONG).show()
+                            navController.popBackStack()
+                        }
+                    },
+                    navController = navController
+                )
+            }
         }
         composable<editprofile>{
             val googleUser = googleAuthUiClient.getSignedInUser()?.userId
@@ -294,10 +440,71 @@ fun AppNavigation(
                     }
                 }
             }
-            EditProfileScreen(
+            EditProfileScreenv1(
                 userData,
                 navController
             )
+        }
+        composable<successchangeprofile> {
+            SuccesChangeProfileScreen(navController)
+        }
+        composable(
+            route = "buy/{seller}",
+            arguments = listOf(navArgument("seller") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val gson = Gson()
+            val sellerJson = backStackEntry.arguments?.getString("seller") ?: ""
+            val seller = gson.fromJson(sellerJson, UserData::class.java)
+            Log.d("intoBuy","gson: ${gson.toString()} \nsellerJson: $sellerJson \nseller: $seller")
+            val sellViewModel = viewModel<sellViewModel>()
+//            BuyScreen(seller,navController,sellViewModel)
+            if (seller != null) {
+                BuyScreen(
+                    userData = seller,
+                    navController = navController,
+                    sellViewModel
+                )
+            } else {
+                // Handle invalid seller data
+                Box(modifier = Modifier.fillMaxSize()) {
+                    Text("Invalid seller data", modifier = Modifier.align(Alignment.Center))
+                    LaunchedEffect(Unit) {
+                        navController.popBackStack()
+                    }
+                }
+            }
+        }
+        composable<changepass> {
+            val googleUser = googleAuthUiClient.getSignedInUser()?.userId
+            val emailUser = email.getCurrentUser()?.userId
+            var currentUserId by remember { mutableStateOf(googleUser ?: emailUser) }
+            var userData by remember { mutableStateOf<UserData?>(null) }
+            LaunchedEffect(Unit) {
+                val id = googleAuthUiClient.getSignedInUser()?.userId ?: email.getCurrentUser()?.userId
+                currentUserId = id
+
+                currentUserId?.let {
+                    try {
+                        val document = Firebase.firestore.collection("Profile").document(it).get().await()
+                        if (document.exists()) {
+                            userData = document.toObject(UserData::class.java)
+                        }
+                    } catch (e: Exception) {
+                        Log.e("FirestoreError", "Error fetching user", e)
+                    }
+                }
+            }
+            userData?.let { user -> ChangePass(user, navController = navController) }
+        }
+        composable<successchangepass> {
+
+            SuccesChangePassScreen(navController)
+        }
+        composable<newpassscreen> {
+            NewPasswordScreen(navController)
+        }
+        composable<successchangepasssign> {
+            SuccesChangePasssign(navController)
         }
     }
 }

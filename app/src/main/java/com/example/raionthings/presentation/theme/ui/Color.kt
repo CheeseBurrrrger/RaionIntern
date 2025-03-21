@@ -1,4 +1,4 @@
-package com.example.raionthings.presentation.theme
+package com.example.raionthings.presentation.theme.ui
 
 import androidx.compose.ui.graphics.Color
 

@@ -10,8 +10,9 @@ data class UserProduk(
     val hargaProduk: Int = 0,
     val stokProduk: Int = 0,
     val dateCreated: Timestamp = Timestamp.now(),
-    val dateExpired: Timestamp? = null,
-//    val productPictureUrl: String = "",
+    val dateExpired: Timestamp? = null ,
+    val productPictureUrl: String = "",
+
 //    val isSold: Boolean = false
 ) {
 //    fun getFormattedDateCreated(): String {

@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.raionthings.data.remote.dto.supabase
 import com.example.raionthings.presentation.login.UserData
-import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
@@ -115,34 +114,6 @@ class ProfileViewModel:ViewModel() {
                             Toast.LENGTH_SHORT
                         ).show()
                     }
-            }else{
-                user?.let {
-                    val credential = EmailAuthProvider.getCredential(it.email!!, "rahasia") // 🔴 You must get the user's password!
-
-                    it.reauthenticate(credential).addOnSuccessListener {
-                        // ✅ Now update the email in Firebase Authentication
-                        user.updateEmail(email).addOnSuccessListener {
-                            Toast.makeText(context, "Email Updated in Firebase Auth!", Toast.LENGTH_SHORT).show()
-                            profileRef.update(mapOf(
-                                "username" to username,
-                                "email" to email,
-                                "address" to address
-                            ))
-                                .addOnSuccessListener {
-                                    Toast.makeText(
-                                        context,
-                                        "Data Updated!",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
-                        }.addOnFailureListener { e ->
-                            Toast.makeText(context, "Email and data Update Failed: ${e.message}", Toast.LENGTH_SHORT).show()
-                        }
-
-                    }.addOnFailureListener { e ->
-                        Toast.makeText(context, "Re-authentication Failed: ${e.message}", Toast.LENGTH_SHORT).show()
-                    }
-                }
             }
         }catch (e:Exception){
 
